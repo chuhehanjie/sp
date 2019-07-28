@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.SearchHisDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.SearchHisEntity" id="searchHisMap">
+        <result property="id" column="id"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="staffName" column="staff_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="openId" column="open_id"/>
+        <result property="searchTime" column="search_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.SearchHisEntity">
+		select * from sp_search_his where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.SearchHisEntity">
+		select * from sp_search_his where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="staffId != null and staffId !='' ">
+				AND staff_id = #{staffId}
+			</if>
+				<if test="staffName != null and staffName !='' ">
+				AND staff_name = #{staffName}
+			</if>
+				<if test="mobile != null and mobile !='' ">
+				AND mobile = #{mobile}
+			</if>
+				<if test="openId != null and openId !='' ">
+				AND open_id = #{openId}
+			</if>
+				<if test="searchTime != null and searchTime !='' ">
+				AND search_time = #{searchTime}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by search_time desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_search_his where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="staffId != null and staffId !='' ">
+                AND staff_id = #{staffId}
+            </if>
+				<if test="staffName != null and staffName !='' ">
+                AND staff_name = #{staffName}
+            </if>
+				<if test="mobile != null and mobile !='' ">
+                AND mobile = #{mobile}
+            </if>
+				<if test="openId != null and openId !='' ">
+                AND open_id = #{openId}
+            </if>
+				<if test="searchTime != null and searchTime !='' ">
+                AND search_time = #{searchTime}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.SearchHisEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_search_his
+		(
+			`staff_id`, 
+			`staff_name`, 
+			`mobile`, 
+			`open_id`, 
+			`search_time`
+		)
+		values
+		(
+			#{staffId}, 
+			#{staffName}, 
+			#{mobile}, 
+			#{openId}, 
+			now()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.SearchHisEntity">
+		update sp_search_his 
+		<set>
+			<if test="staffId != null">`staff_id` = #{staffId}, </if>
+			<if test="staffName != null">`staff_name` = #{staffName}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="openId != null">`open_id` = #{openId}, </if>
+			<if test="searchTime != null">`search_time` = #{searchTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_search_his where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_search_his where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

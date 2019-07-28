@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseParkAreaDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseParkAreaEntity" id="baseParkAreaMap">
+        <result property="id" column="id"/>
+        <result property="areaName" column="area_name"/>
+        <result property="areaDesc" column="area_desc"/>
+        <result property="parkId" column="park_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseParkAreaEntity">
+		select * from base_park_area where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseParkAreaEntity">
+		select * from base_park_area where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="areaName != null and areaName !='' ">
+				AND area_name = #{areaName}
+			</if>
+				<if test="areaDesc != null and areaDesc !='' ">
+				AND area_desc = #{areaDesc}
+			</if>
+				<if test="parkId != null and parkId !='' ">
+				AND park_id = #{parkId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_park_area where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="areaName != null and areaName !='' ">
+                AND area_name = #{areaName}
+            </if>
+				<if test="areaDesc != null and areaDesc !='' ">
+                AND area_desc = #{areaDesc}
+            </if>
+				<if test="parkId != null and parkId !='' ">
+                AND park_id = #{parkId}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseParkAreaEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_park_area
+		(
+			`area_name`, 
+			`area_desc`, 
+			`park_id`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{areaName}, 
+			#{areaDesc}, 
+			#{parkId}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseParkAreaEntity">
+		update base_park_area 
+		<set>
+			<if test="areaName != null">`area_name` = #{areaName}, </if>
+			<if test="areaDesc != null">`area_desc` = #{areaDesc}, </if>
+			<if test="parkId != null">`park_id` = #{parkId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_park_area where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_park_area where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

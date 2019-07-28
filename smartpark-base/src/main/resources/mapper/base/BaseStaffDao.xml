@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseStaffDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseStaffEntity" id="baseStaffMap">
+        <result property="id" column="id"/>
+        <result property="srcusercode" column="SRCUSERCODE"/>
+        <result property="talias" column="TALIAS"/>
+        <result property="idcardnumber" column="IDCARDNUMBER"/>
+        <result property="employnum" column="EMPLOYNUM"/>
+        <result property="username" column="USERNAME"/>
+        <result property="gender" column="GENDER"/>
+        <result property="sdeptcode" column="SDEPTCODE"/>
+        <result property="positioncode" column="POSITIONCODE"/>
+        <result property="title" column="TITLE"/>
+        <result property="titlecode" column="TITLECODE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="mobile" column="MOBILE"/>
+        <result property="officetel" column="OFFICETEL"/>
+        <result property="ctusertype" column="CTUSERTYPE"/>
+        <result property="status" column="STATUS"/>
+        <result property="oldsdeptcode" column="OLDSDEPTCODE"/>
+        <result property="contractType" column="CONTRACT_TYPE"/>
+        <result property="datatype" column="dataType"/>
+        <result property="hropertype" column="hrOperType"/>
+        <result property="opertype" column="operType"/>
+        <result property="unicode" column="uniCode"/>
+        <result property="hrid" column="hrID"/>
+        <result property="loginname" column="loginName"/>
+        <result property="parentcode" column="parentCode"/>
+        <result property="ctcorpcode" column="ctCorpCode"/>
+        <result property="ctstatus" column="ctStatus"/>
+        <result property="ctbirthday" column="ctBirthday"/>
+        <result property="ctposleveltype" column="ctPosLevelType"/>
+        <result property="ctpositionlevel" column="ctPositionLevel"/>
+        <result property="ctposlayertype" column="ctPosLayerType"/>
+        <result property="ctpositionlayer" column="ctPositionLayer"/>
+        <result property="ctpositionsequence" column="ctPositionSequence"/>
+        <result property="ctgender" column="ctGender"/>
+        <result property="reserveaccount" column="reserveAccount"/>
+        <result property="userstatus" column="userStatus"/>
+        <result property="gctusertype" column="gctUserType"/>
+        <result property="shownum" column="showNum"/>
+        <result property="ptype" column="pType"/>
+        <result property="cttitle" column="ctTitle"/>
+        <result property="ctmail" column="ctMail"/>
+        <result property="ctpositiontype" column="ctPositionType"/>
+        <result property="ctpreferredmobile" column="ctPreferredMobile"/>
+        <result property="cttelephonenumber" column="ctTelephoneNumber"/>
+        <result property="ctpositionname" column="ctPositionName"/>
+        <result property="retire" column="retire"/>
+        <result property="groupmail" column="groupMail"/>
+        <result property="registersystem" column="registerSystem"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseStaffEntity">
+		select * from base_staff where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseStaffEntity">
+		select * from base_staff where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="srcusercode != null and srcusercode !='' ">
+				AND SRCUSERCODE = #{srcusercode}
+			</if>
+			<if test="idcardnumber != null and idcardnumber !='' ">
+				AND IDCARDNUMBER = #{idcardnumber}
+			</if>
+		    <if test="sdeptcode != null and sdeptcode !='' ">
+				AND SDEPTCODE = #{sdeptcode}
+			</if>
+		    <if test="employnum != null and employnum !='' ">
+				AND EMPLOYNUM = #{employnum}
+			</if>
+				<if test="username != null and username !='' ">
+				AND USERNAME = #{username}
+			</if>
+				<if test="mobile != null and mobile !='' ">
+				AND MOBILE = #{mobile}
+			</if>
+				<if test="unicode != null and unicode !='' ">
+				AND uniCode = #{unicode}
+			</if>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_staff where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+			<if test="srcusercode != null and srcusercode !='' ">
+				AND SRCUSERCODE = #{srcusercode}
+			</if>
+			<if test="idcardnumber != null and idcardnumber !='' ">
+				AND IDCARDNUMBER = #{idcardnumber}
+			</if>
+			<if test="sdeptcode != null and sdeptcode !='' ">
+				AND SDEPTCODE = #{sdeptcode}
+			</if>
+			<if test="employnum != null and employnum !='' ">
+				AND EMPLOYNUM = #{employnum}
+			</if>
+			<if test="username != null and username !='' ">
+				AND USERNAME = #{username}
+			</if>
+			<if test="mobile != null and mobile !='' ">
+				AND MOBILE = #{mobile}
+			</if>
+			<if test="unicode != null and unicode !='' ">
+				AND uniCode = #{unicode}
+			</if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseStaffEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_staff
+		(
+			`SRCUSERCODE`, 
+			`TALIAS`, 
+			`IDCARDNUMBER`, 
+			`EMPLOYNUM`, 
+			`USERNAME`, 
+			`GENDER`, 
+			`SDEPTCODE`, 
+			`POSITIONCODE`, 
+			`TITLE`, 
+			`TITLECODE`, 
+			`EMAIL`, 
+			`MOBILE`, 
+			`OFFICETEL`, 
+			`CTUSERTYPE`, 
+			`STATUS`, 
+			`OLDSDEPTCODE`, 
+			`CONTRACT_TYPE`, 
+			`dataType`, 
+			`hrOperType`, 
+			`operType`, 
+			`uniCode`, 
+			`hrID`, 
+			`loginName`, 
+			`parentCode`, 
+			`ctCorpCode`, 
+			`ctStatus`, 
+			`ctBirthday`, 
+			`ctPosLevelType`, 
+			`ctPositionLevel`, 
+			`ctPosLayerType`, 
+			`ctPositionLayer`, 
+			`ctPositionSequence`, 
+			`ctGender`, 
+			`reserveAccount`, 
+			`userStatus`, 
+			`gctUserType`, 
+			`showNum`, 
+			`pType`, 
+			`ctTitle`, 
+			`ctMail`, 
+			`ctPositionType`, 
+			`ctPreferredMobile`, 
+			`ctTelephoneNumber`, 
+			`ctPositionName`, 
+			`retire`, 
+			`groupMail`, 
+			`registerSystem`
+		)
+		values
+		(
+			#{srcusercode}, 
+			#{talias}, 
+			#{idcardnumber}, 
+			#{employnum}, 
+			#{username}, 
+			#{gender}, 
+			#{sdeptcode}, 
+			#{positioncode}, 
+			#{title}, 
+			#{titlecode}, 
+			#{email}, 
+			#{mobile}, 
+			#{officetel}, 
+			#{ctusertype}, 
+			#{status}, 
+			#{oldsdeptcode}, 
+			#{contractType}, 
+			#{datatype}, 
+			#{hropertype}, 
+			#{opertype}, 
+			#{unicode}, 
+			#{hrid}, 
+			#{loginname}, 
+			#{parentcode}, 
+			#{ctcorpcode}, 
+			#{ctstatus}, 
+			#{ctbirthday}, 
+			#{ctposleveltype}, 
+			#{ctpositionlevel}, 
+			#{ctposlayertype}, 
+			#{ctpositionlayer}, 
+			#{ctpositionsequence}, 
+			#{ctgender}, 
+			#{reserveaccount}, 
+			#{userstatus}, 
+			#{gctusertype}, 
+			#{shownum}, 
+			#{ptype}, 
+			#{cttitle}, 
+			#{ctmail}, 
+			#{ctpositiontype}, 
+			#{ctpreferredmobile}, 
+			#{cttelephonenumber}, 
+			#{ctpositionname}, 
+			#{retire}, 
+			#{groupmail}, 
+			#{registersystem}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseStaffEntity">
+		update base_staff 
+		<set>
+			<if test="srcusercode != null">`SRCUSERCODE` = #{srcusercode}, </if>
+			<if test="talias != null">`TALIAS` = #{talias}, </if>
+			<if test="idcardnumber != null">`IDCARDNUMBER` = #{idcardnumber}, </if>
+			<if test="employnum != null">`EMPLOYNUM` = #{employnum}, </if>
+			<if test="username != null">`USERNAME` = #{username}, </if>
+			<if test="gender != null">`GENDER` = #{gender}, </if>
+			<if test="sdeptcode != null">`SDEPTCODE` = #{sdeptcode}, </if>
+			<if test="positioncode != null">`POSITIONCODE` = #{positioncode}, </if>
+			<if test="title != null">`TITLE` = #{title}, </if>
+			<if test="titlecode != null">`TITLECODE` = #{titlecode}, </if>
+			<if test="email != null">`EMAIL` = #{email}, </if>
+			<if test="mobile != null">`MOBILE` = #{mobile}, </if>
+			<if test="officetel != null">`OFFICETEL` = #{officetel}, </if>
+			<if test="ctusertype != null">`CTUSERTYPE` = #{ctusertype}, </if>
+			<if test="status != null">`STATUS` = #{status}, </if>
+			<if test="oldsdeptcode != null">`OLDSDEPTCODE` = #{oldsdeptcode}, </if>
+			<if test="contractType != null">`CONTRACT_TYPE` = #{contractType}, </if>
+			<if test="datatype != null">`dataType` = #{datatype}, </if>
+			<if test="hropertype != null">`hrOperType` = #{hropertype}, </if>
+			<if test="opertype != null">`operType` = #{opertype}, </if>
+			<if test="unicode != null">`uniCode` = #{unicode}, </if>
+			<if test="hrid != null">`hrID` = #{hrid}, </if>
+			<if test="loginname != null">`loginName` = #{loginname}, </if>
+			<if test="parentcode != null">`parentCode` = #{parentcode}, </if>
+			<if test="ctcorpcode != null">`ctCorpCode` = #{ctcorpcode}, </if>
+			<if test="ctstatus != null">`ctStatus` = #{ctstatus}, </if>
+			<if test="ctbirthday != null">`ctBirthday` = #{ctbirthday}, </if>
+			<if test="ctposleveltype != null">`ctPosLevelType` = #{ctposleveltype}, </if>
+			<if test="ctpositionlevel != null">`ctPositionLevel` = #{ctpositionlevel}, </if>
+			<if test="ctposlayertype != null">`ctPosLayerType` = #{ctposlayertype}, </if>
+			<if test="ctpositionlayer != null">`ctPositionLayer` = #{ctpositionlayer}, </if>
+			<if test="ctpositionsequence != null">`ctPositionSequence` = #{ctpositionsequence}, </if>
+			<if test="ctgender != null">`ctGender` = #{ctgender}, </if>
+			<if test="reserveaccount != null">`reserveAccount` = #{reserveaccount}, </if>
+			<if test="userstatus != null">`userStatus` = #{userstatus}, </if>
+			<if test="gctusertype != null">`gctUserType` = #{gctusertype}, </if>
+			<if test="shownum != null">`showNum` = #{shownum}, </if>
+			<if test="ptype != null">`pType` = #{ptype}, </if>
+			<if test="cttitle != null">`ctTitle` = #{cttitle}, </if>
+			<if test="ctmail != null">`ctMail` = #{ctmail}, </if>
+			<if test="ctpositiontype != null">`ctPositionType` = #{ctpositiontype}, </if>
+			<if test="ctpreferredmobile != null">`ctPreferredMobile` = #{ctpreferredmobile}, </if>
+			<if test="cttelephonenumber != null">`ctTelephoneNumber` = #{cttelephonenumber}, </if>
+			<if test="ctpositionname != null">`ctPositionName` = #{ctpositionname}, </if>
+			<if test="retire != null">`retire` = #{retire}, </if>
+			<if test="groupmail != null">`groupMail` = #{groupmail}, </if>
+			<if test="registersystem != null">`registerSystem` = #{registersystem}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_staff where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_staff where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="queryParkInfoByStaffMobile" parameterType="java.lang.String" resultType="java.util.HashMap">
+		SELECT b.building_name AS buildingName,p.name AS parkName FROM base_park p
+		INNER JOIN base_building b ON b.park_id = p.id
+		INNER JOIN base_floor f ON f.building_id = b.id
+		INNER JOIN sp_station s ON s.floor_id = f.id
+		INNER JOIN sp_user_station us ON us.station_id = s.id
+		inner join base_staff staff ON staff.EMPLOYNUM = us.work_no
+		where staff.MOBILE = #{mobile}
+	</select>
+
+</mapper>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseDeviceInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseDeviceInfoEntity" id="baseDeviceInfoMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="subsystemId" column="subsystem_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="seriesName" column="series_name"/>
+        <result property="modelName" column="model_name"/>
+        <result property="factoryTime" column="factory_time"/>
+        <result property="serialNo" column="serial_no"/>
+        <result property="locationId" column="location_id"/>
+        <result property="locationDesc" column="location_desc"/>
+        <result property="locationCoordinate" column="location_coordinate"/>
+        <result property="objId" column="obj_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="remark" column="remark"/>
+        <result property="personResponsible" column="person_responsible"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseDeviceInfoEntity">
+		select * from base_device_info where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseDeviceInfoEntity">
+		select * from base_device_info where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="name != null and name !='' ">
+				AND name = #{name}
+			</if>
+				<if test="code != null and code !='' ">
+				AND code = #{code}
+			</if>
+				<if test="subsystemId != null and subsystemId !='' ">
+				AND subsystem_id = #{subsystemId}
+			</if>
+				<if test="brandName != null and brandName !='' ">
+				AND brand_name = #{brandName}
+			</if>
+				<if test="seriesName != null and seriesName !='' ">
+				AND series_name = #{seriesName}
+			</if>
+				<if test="modelName != null and modelName !='' ">
+				AND model_name = #{modelName}
+			</if>
+				<if test="factoryTime != null and factoryTime !='' ">
+				AND factory_time = #{factoryTime}
+			</if>
+				<if test="serialNo != null and serialNo !='' ">
+				AND serial_no = #{serialNo}
+			</if>
+				<if test="locationId != null and locationId !='' ">
+				AND location_id = #{locationId}
+			</if>
+				<if test="locationDesc != null and locationDesc !='' ">
+				AND location_desc = #{locationDesc}
+			</if>
+				<if test="locationCoordinate != null and locationCoordinate !='' ">
+				AND location_coordinate = #{locationCoordinate}
+			</if>
+				<if test="objId != null and objId !='' ">
+				AND obj_id = #{objId}
+			</if>
+				<if test="deptId != null and deptId !='' ">
+				AND dept_id = #{deptId}
+			</if>
+				<if test="remark != null and remark !='' ">
+				AND remark = #{remark}
+			</if>
+				<if test="personResponsible != null and personResponsible !='' ">
+				AND person_responsible = #{personResponsible}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_device_info where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="name != null and name !='' ">
+                AND name = #{name}
+            </if>
+				<if test="code != null and code !='' ">
+                AND code = #{code}
+            </if>
+				<if test="subsystemId != null and subsystemId !='' ">
+                AND subsystem_id = #{subsystemId}
+            </if>
+				<if test="brandName != null and brandName !='' ">
+                AND brand_name = #{brandName}
+            </if>
+				<if test="seriesName != null and seriesName !='' ">
+                AND series_name = #{seriesName}
+            </if>
+				<if test="modelName != null and modelName !='' ">
+                AND model_name = #{modelName}
+            </if>
+				<if test="factoryTime != null and factoryTime !='' ">
+                AND factory_time = #{factoryTime}
+            </if>
+				<if test="serialNo != null and serialNo !='' ">
+                AND serial_no = #{serialNo}
+            </if>
+				<if test="locationId != null and locationId !='' ">
+                AND location_id = #{locationId}
+            </if>
+				<if test="locationDesc != null and locationDesc !='' ">
+                AND location_desc = #{locationDesc}
+            </if>
+				<if test="locationCoordinate != null and locationCoordinate !='' ">
+                AND location_coordinate = #{locationCoordinate}
+            </if>
+				<if test="objId != null and objId !='' ">
+                AND obj_id = #{objId}
+            </if>
+				<if test="deptId != null and deptId !='' ">
+                AND dept_id = #{deptId}
+            </if>
+				<if test="remark != null and remark !='' ">
+                AND remark = #{remark}
+            </if>
+				<if test="personResponsible != null and personResponsible !='' ">
+                AND person_responsible = #{personResponsible}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseDeviceInfoEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_device_info
+		(
+			`name`, 
+			`code`, 
+			`subsystem_id`, 
+			`brand_name`, 
+			`series_name`, 
+			`model_name`, 
+			`factory_time`, 
+			`serial_no`, 
+			`location_id`, 
+			`location_desc`, 
+			`location_coordinate`, 
+			`obj_id`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`, 
+			`dept_id`, 
+			`remark`, 
+			`person_responsible`
+		)
+		values
+		(
+			#{name}, 
+			#{code}, 
+			#{subsystemId}, 
+			#{brandName}, 
+			#{seriesName}, 
+			#{modelName}, 
+			#{factoryTime}, 
+			#{serialNo}, 
+			#{locationId}, 
+			#{locationDesc}, 
+			#{locationCoordinate}, 
+			#{objId}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}, 
+			#{deptId}, 
+			#{remark}, 
+			#{personResponsible}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseDeviceInfoEntity">
+		update base_device_info 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="subsystemId != null">`subsystem_id` = #{subsystemId}, </if>
+			<if test="brandName != null">`brand_name` = #{brandName}, </if>
+			<if test="seriesName != null">`series_name` = #{seriesName}, </if>
+			<if test="modelName != null">`model_name` = #{modelName}, </if>
+			<if test="factoryTime != null">`factory_time` = #{factoryTime}, </if>
+			<if test="serialNo != null">`serial_no` = #{serialNo}, </if>
+			<if test="locationId != null">`location_id` = #{locationId}, </if>
+			<if test="locationDesc != null">`location_desc` = #{locationDesc}, </if>
+			<if test="locationCoordinate != null">`location_coordinate` = #{locationCoordinate}, </if>
+			<if test="objId != null">`obj_id` = #{objId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="personResponsible != null">`person_responsible` = #{personResponsible}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_device_info where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_device_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

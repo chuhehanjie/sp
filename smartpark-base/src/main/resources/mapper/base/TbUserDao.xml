@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.TbUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.TbUserEntity" id="tbUserMap">
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="mobile" column="mobile"/>
+        <result property="password" column="password"/>
+        <result property="openId" column="open_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.TbUserEntity">
+		select * from tb_user where user_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.TbUserEntity">
+		select t.*,r.role_id AS roleId,r.role_name AS roleName from tb_user t
+		LEFT JOIN (select ur.user_id,ur.role_id,r.role_name from sys_user_role ur,sys_role r where ur.role_id = r.role_id AND ur.user_source = 2) r ON r.user_id = t.user_id
+		where 1=1
+		<if test="userId != null and userId !='' ">
+			AND t.user_id = #{userId}
+		</if>
+		<if test="username != null and username !='' ">
+			AND t.username = #{username}
+		</if>
+		<if test="mobile != null and mobile !='' ">
+			AND t.mobile = #{mobile}
+		</if>
+		<if test="openId != null and openId !='' ">
+			AND t.open_id = #{openId}
+		</if>
+		<if test="keyword != null and keyword !='' ">
+			AND (t.username = #{keyword} or t.mobile = #{keyword} or r.role_name = #{keyword})
+		</if>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by t.user_id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		SELECT count(t.user_id) FROM tb_user t
+		LEFT JOIN (SELECT ur.user_id,ur.role_id,r.role_name FROM sys_user_role ur,sys_role r WHERE ur.role_id = r.role_id AND ur.user_source = 2) r ON r.user_id = t.user_id
+		WHERE 1=1
+		<if test="userId != null and userId !='' ">
+			AND t.user_id = #{userId}
+		</if>
+		<if test="username != null and username !='' ">
+			AND t.username = #{username}
+		</if>
+		<if test="mobile != null and mobile !='' ">
+			AND t.mobile = #{mobile}
+		</if>
+		<if test="openId != null and openId !='' ">
+			AND t.open_id = #{openId}
+		</if>
+		<if test="keyword != null and keyword !='' ">
+			AND (t.username = #{keyword} or t.mobile = #{keyword} or r.role_name = #{keyword})
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.TbUserEntity" useGeneratedKeys="true" keyProperty="userId">
+		insert into tb_user
+		(
+			`username`, 
+			`mobile`, 
+			`password`, 
+			`open_id`, 
+			`create_time`
+		)
+		values
+		(
+			#{username}, 
+			#{mobile}, 
+			#{password}, 
+			#{openId}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.TbUserEntity">
+		update tb_user 
+		<set>
+			<if test="username != null">`username` = #{username}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="openId != null">`open_id` = #{openId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<delete id="delete">
+		delete from tb_user where user_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tb_user where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+	<update id="updateUsernameByOpenId" parameterType="com.chris.smartpark.base.entity.TbUserEntity">
+		update tb_user set username = #{username} where open_id = #{openId}
+	</update>
+
+</mapper>

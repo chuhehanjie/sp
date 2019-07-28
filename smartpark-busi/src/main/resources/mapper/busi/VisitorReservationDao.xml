@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.VisitorReservationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.VisitorReservationEntity" id="visitorReservationMap">
+        <result property="id" column="id"/>
+        <result property="reservationNo" column="reservation_no"/>
+        <result property="phone" column="phone"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="visitorId" column="visitor_id"/>
+        <result property="staffId" column="staff_id"/>
+        <result property="staffMobile" column="staff_mobile"/>
+        <result property="status" column="status"/>
+        <result property="appointStartTime" column="appoint_start_time"/>
+        <result property="appointEndTime" column="appoint_end_time"/>
+        <result property="actStartTime" column="act_start_time"/>
+        <result property="actEndTime" column="act_end_time"/>
+        <result property="type" column="type"/>
+        <result property="remark" column="remark"/>
+        <result property="companions" column="companions"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+        <result property="physicalCardId" column="physical_card_id"/>
+        <result property="openId" column="open_id"/>
+        <result property="isSendNotice" column="is_send_notice"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select * from sp_visitor_reservation where id = #{value}
+	</select>
+
+	<select id="queryEffectRecord" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select * from sp_visitor_reservation a LEFT JOIN sp_visitor_info b on a.visitor_id=b.id where  a.`status` = 3  and b.idcard_no = #{idcardNo};
+	</select>
+
+	<select id="queryByIdcardAndStatus" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select a.* from sp_visitor_reservation a LEFT JOIN sp_visitor_info b on a.visitor_id=b.id where  a.`status` = #{status}  and b.idcard_no = #{idcardNo};
+	</select>
+
+	<select id="queryByStatusAndTime" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select * from sp_visitor_reservation a where a.`status` in (1,3) and a.appoint_end_time &lt; DATE_ADD(now(),INTERVAL 5 MINUTE)
+	</select>
+
+	<select id="queryByStatusAndTime2" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select * from sp_visitor_reservation a where a.`status` in (1) and a.appoint_end_time &lt;= DATE_ADD(CURRENT_TIMESTAMP(),INTERVAL #{beforeHours} hour)
+		and a.appoint_end_time &gt;=CURRENT_TIMESTAMP()
+		and a.is_send_notice=0
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		select * from sp_visitor_reservation where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+			<if test="phone != null and phone !='' ">
+			AND phone = #{phone}
+			</if>
+				<if test="reservationNo != null and reservationNo !='' ">
+				AND reservation_no = #{reservationNo}
+			</if>
+				<if test="photoUrl != null and photoUrl !='' ">
+				AND photo_url = #{photoUrl}
+			</if>
+				<if test="visitorId != null and visitorId !='' ">
+				AND visitor_id = #{visitorId}
+			</if>
+				<if test="staffId != null and staffId !='' ">
+				AND staff_id = #{staffId}
+			</if>
+			<if test="staffMobile != null and staffMobile !='' ">
+				AND staff_mobile = #{staffMobile}
+			</if>
+				<if test="status != null and status !='' ">
+				AND status = #{status}
+			</if>
+				<if test="appointStartTime != null and appointStartTime !='' ">
+				AND appoint_start_time = #{appointStartTime}
+			</if>
+				<if test="appointEndTime != null and appointEndTime !='' ">
+				AND appoint_end_time = #{appointEndTime}
+			</if>
+				<if test="actStartTime != null and actStartTime !='' ">
+				AND act_start_time = #{actStartTime}
+			</if>
+				<if test="actEndTime != null and actEndTime !='' ">
+				AND act_end_time = #{actEndTime}
+			</if>
+				<if test="type != null and type !='' ">
+				AND type = #{type}
+			</if>
+				<if test="physicalCardId != null and physicalCardId !='' ">
+				AND physical_card_id = #{physicalCardId}
+			</if>
+			<if test="openId != null and openId !='' ">
+				AND open_id = #{openId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryReservationOrdersByOpenId" resultType="com.chris.smartpark.busi.dto.ReservationOrderQryDTO" >
+		SELECT
+			r.id,
+			r.status,
+			r.appoint_start_time AS appointStartTime,
+			r.appoint_end_time AS appointEndTime,
+			r.remark,
+			v.name AS visitorName,
+			v.phone AS visitorMobile,
+			v.idcard_no AS idcardNo,
+			r.reservation_no AS reservationNo,
+			s.USERNAME AS staffName,
+			s.mobile AS staffMobile
+		 FROM sp_visitor_reservation r
+		INNER JOIN sp_visitor_info_his v ON v.reservation_id = r.id
+		INNER JOIN base_staff s ON s.id = r.staff_id
+		<if test="type == 1">
+			WHERE r.open_id = #{openId}
+		</if>
+		<if test="type == 2">
+			INNER JOIN tb_user u ON u.mobile = s.MOBILE
+			<if test="isAdminRole == true">
+				WHERE 1=1
+				<if test="keyword != null and keyword !=''">
+					AND (s.USERNAME = #{keyword} or s.MOBILE = #{keyword})
+				</if>
+			</if>
+			<if test="isAdminRole == false">
+				WHERE u.open_id = #{openId}
+			</if>
+		</if>
+		<if test="status != null">
+			AND r.status = #{status}
+		</if>
+		ORDER BY r.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="countReservationOrdersByOpenId" resultType="int" >
+		SELECT COUNT(1) FROM sp_visitor_reservation r
+        INNER JOIN sp_visitor_info_his v ON v.reservation_id = r.id
+		<if test="type == 1">
+			WHERE r.open_id = #{openId}
+		</if>
+		<if test="type == 2">
+			INNER JOIN base_staff s ON s.id = r.staff_id
+			INNER JOIN tb_user u ON u.mobile = s.MOBILE
+			<if test="isAdminRole == true">
+				WHERE 1=1
+				<if test="keyword != null and keyword !=''">
+					AND (s.USERNAME = #{keyword} or s.MOBILE = #{keyword})
+				</if>
+			</if>
+			<if test="isAdminRole == false">
+				WHERE u.open_id = #{openId}
+			</if>
+		</if>
+		<if test="status != null">
+			AND r.status = #{status}
+		</if>
+		ORDER BY r.create_time desc
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_visitor_reservation where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+			<if test="reservationNo != null and reservationNo !='' ">
+                AND reservation_no = #{reservationNo}
+            </if>
+				<if test="phone != null and phone !='' ">
+                AND phone = #{phone}
+            </if>
+				<if test="photoUrl != null and photoUrl !='' ">
+                AND photo_url = #{photoUrl}
+            </if>
+				<if test="visitorId != null and visitorId !='' ">
+                AND visitor_id = #{visitorId}
+            </if>
+				<if test="staffId != null and staffId !='' ">
+                AND staff_id = #{staffId}
+            </if>
+			<if test="staffMobile != null and staffMobile !='' ">
+				AND staff_mobile = #{staffMobile}
+			</if>
+				<if test="status != null and status !='' ">
+                AND status = #{status}
+            </if>
+				<if test="appointStartTime != null and appointStartTime !='' ">
+                AND appoint_start_time = #{appointStartTime}
+            </if>
+				<if test="appointEndTime != null and appointEndTime !='' ">
+                AND appoint_end_time = #{appointEndTime}
+            </if>
+				<if test="actStartTime != null and actStartTime !='' ">
+                AND act_start_time = #{actStartTime}
+            </if>
+				<if test="actEndTime != null and actEndTime !='' ">
+                AND act_end_time = #{actEndTime}
+            </if>
+				<if test="type != null and type !='' ">
+                AND type = #{type}
+            </if>
+				<if test="physicalCardId != null and physicalCardId !='' ">
+                AND physical_card_id = #{physicalCardId}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.VisitorReservationEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_visitor_reservation
+		(
+			`reservation_no`,
+			`phone`,
+			`photo_url`,
+			`visitor_id`, 
+			`staff_id`, 
+			`staff_mobile`,
+			`status`,
+			`appoint_start_time`, 
+			`appoint_end_time`, 
+			`act_start_time`, 
+			`act_end_time`, 
+			`type`, 
+			`remark`, 
+			`companions`, 
+			`ext1`, 
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`, 
+			`physical_card_id`,
+			`open_id`
+		)
+		values
+		(
+			#{reservationNo},
+			#{phone},
+			#{photoUrl},
+			#{visitorId}, 
+			#{staffId}, 
+			#{staffMobile},
+			#{status},
+			#{appointStartTime}, 
+			#{appointEndTime}, 
+			#{actStartTime}, 
+			#{actEndTime}, 
+			#{type}, 
+			#{remark}, 
+			#{companions}, 
+			#{ext1}, 
+			#{ext2}, 
+			#{ext3}, 
+			now(),
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}, 
+			#{physicalCardId},
+			#{openId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		update sp_visitor_reservation 
+		<set>
+			<if test="reservationNo != null">`reservation_no` = #{reservationNo}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="photoUrl != null">`photo_url` = #{photoUrl}, </if>
+			<if test="visitorId != null">`visitor_id` = #{visitorId}, </if>
+			<if test="staffId != null">`staff_id` = #{staffId}, </if>
+			<if test="staffMobile != null">`staff_mobile` = #{staffMobile}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="appointStartTime != null">`appoint_start_time` = #{appointStartTime}, </if>
+			<if test="appointEndTime != null">`appoint_end_time` = #{appointEndTime}, </if>
+			<if test="actStartTime != null">`act_start_time` = #{actStartTime}, </if>
+			<if test="actEndTime != null">`act_end_time` = #{actEndTime}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="companions != null">`companions` = #{companions}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}, </if>
+			<if test="openId != null">`open_id` = #{openId}, </if>
+			<if test="physicalCardId != null">`physical_card_id` = #{physicalCardId}</if>
+			<if test="isSendNotice != null">`is_send_notice` = #{isSendNotice}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_visitor_reservation where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_visitor_reservation where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<update id="updateStatus" parameterType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		update sp_visitor_reservation set update_time = now(),status = #{status},physical_card_id = #{physicalCardId},ext2 = #{ext2} where id = #{id}
+	</update>
+
+	<update id="updateRejectReasonAndStatus" parameterType="com.chris.smartpark.busi.entity.VisitorReservationEntity">
+		update sp_visitor_reservation set update_time = now(),status = #{status},ext1 = #{ext1},ext2 = #{ext2} where id = #{id}
+	</update>
+
+	<select id="countReservationOrders" resultType="int" >
+		SELECT COUNT(1) FROM sp_visitor_reservation r
+		INNER JOIN sp_visitor_info_his v ON v.reservation_id = r.id
+		INNER JOIN base_staff s ON s.id = r.staff_id
+		WHERE 1=1
+		<if test="keyword != null">
+			AND (v.name = #{keyword} or v.phone = #{keyword} or v.idcard_no = #{keyword} or s.USERNAME = #{keyword} or s.mobile = #{keyword})
+		</if>
+		<if test="status != null">
+			AND r.status = #{status}
+		</if>
+	</select>
+
+	<select id="searchReservationOrders" resultType="com.chris.smartpark.busi.dto.ReservationOrderQryDTO" >
+		SELECT
+			r.id,
+			r.status,
+			r.appoint_start_time AS appointStartTime,
+			r.appoint_end_time AS appointEndTime,
+			r.remark,
+			v.name AS visitorName,
+			v.phone AS visitorMobile,
+			v.idcard_no AS idcardNo,
+			r.reservation_no AS reservationNo,
+			s.USERNAME AS staffName,
+			s.mobile AS staffMobile
+		FROM sp_visitor_reservation r
+		INNER JOIN sp_visitor_info_his v ON v.reservation_id = r.id
+		INNER JOIN base_staff s ON s.id = r.staff_id
+		WHERE 1=1
+		<if test="keyword != null">
+			AND (v.name = #{keyword} or v.phone = #{keyword} or v.idcard_no = #{keyword} or s.USERNAME = #{keyword} or s.mobile = #{keyword})
+		</if>
+		<if test="status != null">
+			AND r.status = #{status}
+		</if>
+		ORDER BY r.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryCosonDoorCtrlParams" parameterType="java.lang.Long" resultType="com.chris.smartpark.busi.dto.CosonDoorCtrlReqDTO">
+		select t.door_id as doorId,d.ext1 AS mappingDoorId,dc.controller_ip AS doorCtrlIp
+		FROM sp_visitor_door_rel t
+		INNER JOIN sp_door d ON d.id = t.door_id
+		INNER JOIN sp_door_readno dr ON dr.id = d.door_readno_id
+		INNER JOIN sp_door_controller dc ON dc.id = dr.controller_id
+		where t.reservation_id = #{reservationOrderId}
+	</select>
+
+</mapper>

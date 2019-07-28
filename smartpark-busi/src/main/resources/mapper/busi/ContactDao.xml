@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.ContactDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.ContactEntity" id="contactMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="idcardNo" column="idcard_no"/>
+        <result property="mobile" column="mobile"/>
+        <result property="openId" column="open_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.ContactEntity">
+		select * from sp_contact where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.ContactEntity">
+		SELECT t.*,u1.username AS createUserName,u2.username AS updateUserName FROM sp_contact t
+		LEFT JOIN tb_user u1 ON t.create_user_id = u1.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		where 1=1
+			<if test="id != null and id !='' ">
+				AND t.id = #{id}
+			</if>
+				<if test="name != null and name !='' ">
+				AND t.name = #{name}
+			</if>
+				<if test="idcardNo != null and idcardNo !='' ">
+				AND t.idcard_no = #{idcardNo}
+			</if>
+				<if test="mobile != null and mobile !='' ">
+				AND t.mobile = #{mobile}
+			</if>
+				<if test="openId != null and openId !='' ">
+				AND t.open_id = #{openId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by t.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(t.id) from sp_contact t
+		LEFT JOIN tb_user u1 ON t.create_user_id = u1.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		where 1=1
+		<if test="id != null and id !='' ">
+			AND t.id = #{id}
+		</if>
+		<if test="name != null and name !='' ">
+			AND t.name = #{name}
+		</if>
+		<if test="idcardNo != null and idcardNo !='' ">
+			AND t.idcard_no = #{idcardNo}
+		</if>
+		<if test="mobile != null and mobile !='' ">
+			AND t.mobile = #{mobile}
+		</if>
+		<if test="openId != null and openId !='' ">
+			AND t.open_id = #{openId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.ContactEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_contact
+		(
+			`name`, 
+			`idcard_no`, 
+			`mobile`, 
+			`open_id`, 
+			`remark`, 
+			`create_time`, 
+			`create_user_id`
+		)
+		values
+		(
+			#{name}, 
+			#{idcardNo}, 
+			#{mobile}, 
+			#{openId}, 
+			#{remark}, 
+			now(),
+			#{createUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.ContactEntity">
+		update sp_contact set update_time = now()
+		<if test="name != null">,`name` = #{name}</if>
+		<if test="idcardNo != null">,`idcard_no` = #{idcardNo}</if>
+		<if test="mobile != null">,`mobile` = #{mobile}</if>
+		<if test="openId != null">,`open_id` = #{openId}</if>
+		<if test="remark != null">,`remark` = #{remark}</if>
+		<if test="updateUserId != null">,`update_user_id` = #{updateUserId}</if>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_contact where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_contact where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

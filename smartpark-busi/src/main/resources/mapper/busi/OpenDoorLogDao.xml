@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.OpenDoorLogDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.OpenDoorLogEntity" id="openDoorLogMap">
+        <result property="id" column="id"/>
+        <result property="doorId" column="door_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userType" column="user_type"/>
+        <result property="openTime" column="open_time"/>
+        <result property="openType" column="open_type"/>
+        <result property="openResult" column="open_result"/>
+        <result property="openResultDesc" column="open_result_desc"/>
+        <result property="inOutFlag" column="in_out_flag"/>
+        <result property="relId" column="rel_id"/>
+        <result property="remark" column="remark"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.OpenDoorLogEntity">
+		select * from sp_open_door_log where id = #{value}
+	</select>
+
+	<select id="queryTotalByKeyword" resultType="int">
+		SELECT
+			COUNT(t.id)
+		FROM sp_open_door_log t
+		INNER JOIN sp_door d ON d.id = t.door_id
+		INNER JOIN sp_door_readno dr ON dr.id = d.door_readno_id
+		INNER JOIN sp_door_controller dc ON dc.id = dr.controller_id
+		INNER JOIN (select s.username,u.user_id,u.open_id FROM tb_user u LEFT JOIN base_staff s ON s.MOBILE = u.mobile) u ON u.user_id = t.user_id
+		WHERE 1=1
+		<if test="openId != null and openId !='' ">
+			AND u.open_id = #{openId}
+		</if>
+		<if test="keyword != null and keyword !='' ">
+			AND (d.door_name = #{keyword} or dc.controller_name = #{keyword} or u.username = #{keyword})
+		</if>
+		<if test="startTime != null and startTime !='' ">
+			AND t.create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime !='' ">
+			AND t.create_time &lt;= #{endTime}
+		</if>
+	</select>
+
+	<select id="queryListByKeyword" resultType="com.chris.smartpark.busi.dto.OpenDoorLogDTO">
+		SELECT
+			t.id,
+			t.door_id AS doorId,
+			d.door_name AS doorName,
+			t.user_id AS userId,
+			u.username AS userName,
+			iF(t.user_type=1,'访客','员工') AS userType,
+			dc.controller_name AS doorCtrlName,
+			t.create_time AS openDoorTime,
+			t.open_result_desc AS openDoorResult,
+			IF(t.open_type='2','远程开门','正常开门') AS openDoorType,
+			t.in_out_flag AS inOutFlag
+		FROM sp_open_door_log t
+		INNER JOIN sp_door d ON d.id = t.door_id
+		INNER JOIN sp_door_readno dr ON dr.id = d.door_readno_id
+		INNER JOIN sp_door_controller dc ON dc.id = dr.controller_id
+		INNER JOIN (select s.username,u.user_id,u.open_id FROM tb_user u LEFT JOIN base_staff s ON s.MOBILE = u.mobile) u ON u.user_id = t.user_id
+		WHERE 1=1
+		<if test="openId != null and openId !='' ">
+			AND u.open_id = #{openId}
+		</if>
+		<if test="keyword != null and keyword !='' ">
+			AND (d.door_name = #{keyword} or dc.controller_name = #{keyword} or u.username = #{keyword})
+		</if>
+		<if test="startTime != null and startTime !='' ">
+			AND t.create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime !='' ">
+			AND t.create_time &lt;= #{endTime}
+		</if>
+		ORDER BY t.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.OpenDoorLogEntity">
+		select * from sp_open_door_log t where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="doorId != null and doorId !='' ">
+				AND door_id = #{doorId}
+			</if>
+				<if test="userId != null and userId !='' ">
+				AND user_id = #{userId}
+			</if>
+				<if test="userType != null and userType !='' ">
+				AND user_type = #{userType}
+			</if>
+				<if test="openTime != null and openTime !='' ">
+				AND open_time = #{openTime}
+			</if>
+				<if test="openType != null and openType !='' ">
+				AND open_type = #{openType}
+			</if>
+				<if test="openResult != null and openResult !='' ">
+				AND open_result = #{openResult}
+			</if>
+				<if test="inOutFlag != null and inOutFlag !='' ">
+				AND in_out_flag = #{inOutFlag}
+			</if>
+				<if test="relId != null and relId !='' ">
+				AND rel_id = #{relId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by t.create_time desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_open_door_log where 1=1
+		<if test="id != null and id !='' ">
+			AND id = #{id}
+		</if>
+			<if test="doorId != null and doorId !='' ">
+			AND door_id = #{doorId}
+		</if>
+			<if test="userId != null and userId !='' ">
+			AND user_id = #{userId}
+		</if>
+			<if test="userType != null and userType !='' ">
+			AND user_type = #{userType}
+		</if>
+			<if test="openTime != null and openTime !='' ">
+			AND open_time = #{openTime}
+		</if>
+			<if test="openType != null and openType !='' ">
+			AND open_type = #{openType}
+		</if>
+			<if test="openResult != null and openResult !='' ">
+			AND open_result = #{openResult}
+		</if>
+			<if test="inOutFlag != null and inOutFlag !='' ">
+			AND in_out_flag = #{inOutFlag}
+		</if>
+			<if test="relId != null and relId !='' ">
+			AND rel_id = #{relId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.OpenDoorLogEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_open_door_log
+		(
+			`door_id`, 
+			`user_id`, 
+			`user_type`, 
+			`open_time`, 
+			`open_type`, 
+			`open_result`, 
+			`open_result_desc`, 
+			`in_out_flag`, 
+			`rel_id`, 
+			`remark`, 
+			`ext1`, 
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{doorId}, 
+			#{userId}, 
+			#{userType}, 
+			#{openTime}, 
+			#{openType}, 
+			#{openResult}, 
+			#{openResultDesc}, 
+			#{inOutFlag}, 
+			#{relId}, 
+			#{remark}, 
+			#{ext1}, 
+			#{ext2}, 
+			#{ext3}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.OpenDoorLogEntity">
+		update sp_open_door_log 
+		<set>
+			<if test="doorId != null">`door_id` = #{doorId}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userType != null">`user_type` = #{userType}, </if>
+			<if test="openTime != null">`open_time` = #{openTime}, </if>
+			<if test="openType != null">`open_type` = #{openType}, </if>
+			<if test="openResult != null">`open_result` = #{openResult}, </if>
+			<if test="openResultDesc != null">`open_result_desc` = #{openResultDesc}, </if>
+			<if test="inOutFlag != null">`in_out_flag` = #{inOutFlag}, </if>
+			<if test="relId != null">`rel_id` = #{relId}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_open_door_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_open_door_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

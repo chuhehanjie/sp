@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.MyCarDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.MyCarEntity" id="myCarMap">
+        <result property="id" column="id"/>
+        <result property="carNo" column="car_no"/>
+        <result property="carBrand" column="car_brand"/>
+        <result property="carColor" column="car_color"/>
+        <result property="defaultTag" column="default_tag"/>
+        <result property="openId" column="open_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.MyCarEntity">
+		select * from sp_my_car where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.MyCarEntity">
+		SELECT t.*,u1.username AS createUserName,u2.username AS updateUserName,
+			d1.name AS brandName,d2.name AS color,u.USERNAME AS staffName,
+			u.mobile,u.IDCARDNUMBER as idcardNo,u.deptName
+		FROM sp_my_car t
+		LEFT JOIN tb_user u1 ON t.create_user_id = u1.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		LEFT JOIN (select name,value FROM sys_data_dict where type = 'CAR_BRAND') d1 ON t.car_brand = d1.value
+		LEFT JOIN (select name,value FROM sys_data_dict where type = 'CAR_COLOR') d2 ON t.car_color = d2.value
+		LEFT JOIN (select u.open_id,u.mobile,s.USERNAME,s.IDCARDNUMBER,o.DEPTNAME AS deptName FROM tb_user u,base_staff s,base_organization o where u.mobile = s.MOBILE and s.SDEPTCODE = o.SDEPTCODE) u ON t.open_id = u.open_id
+		WHERE 1=1
+			<if test="id != null and id !='' ">
+				AND t.id = #{id}
+			</if>
+			<if test="carNo != null and carNo !='' ">
+				AND t.car_no = #{carNo}
+			</if>
+			<if test="carBrand != null and carBrand !='' ">
+				AND t.car_brand = #{carBrand}
+			</if>
+			<if test="carColor != null and carColor !='' ">
+				AND t.car_color = #{carColor}
+			</if>
+			<if test="defaultTag != null and defaultTag !='' ">
+				AND t.default_tag = #{defaultTag}
+			</if>
+			<if test="openId != null and openId !='' ">
+				AND t.open_id = #{openId}
+			</if>
+			<if test="staffName != null and staffName !='' ">
+				AND u.USERNAME = #{staffName}
+			</if>
+			<if test="mobile != null and mobile != '' ">
+				AND u.mobile = #{mobile}
+			</if>
+			<if test="keyword != null and keyword != '' ">
+				AND (t.car_no = #{keyword} or u.USERNAME = #{keyword} or u.mobile = #{keyword})
+			</if>
+		    <choose>
+				<when test="sidx != null and sidx.trim() != ''">
+					order by ${sidx} ${order}
+				</when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		SELECT count(t.id) FROM sp_my_car t
+		LEFT JOIN tb_user u1 ON t.create_user_id = u1.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		LEFT JOIN (select name,value FROM sys_data_dict where type = 'CAR_BRAND') d1 ON t.car_brand = d1.value
+		LEFT JOIN (select name,value FROM sys_data_dict where type = 'CAR_COLOR') d2 ON t.car_color = d2.value
+		LEFT JOIN (select u.open_id,u.mobile,s.USERNAME,s.IDCARDNUMBER,o.DEPTNAME AS deptName FROM tb_user u,base_staff s,base_organization o where u.mobile = s.MOBILE and s.SDEPTCODE = o.SDEPTCODE) u ON t.open_id = u.open_id
+		WHERE 1=1
+			<if test="id != null and id !='' ">
+				AND t.id = #{id}
+			</if>
+			<if test="carNo != null and carNo !='' ">
+				AND t.car_no = #{carNo}
+			</if>
+			<if test="carBrand != null and carBrand !='' ">
+				AND t.car_brand = #{carBrand}
+			</if>
+			<if test="carColor != null and carColor !='' ">
+				AND t.car_color = #{carColor}
+			</if>
+			<if test="defaultTag != null and defaultTag !='' ">
+				AND t.default_tag = #{defaultTag}
+			</if>
+			<if test="openId != null and openId !='' ">
+				AND t.open_id = #{openId}
+			</if>
+			<if test="staffName != null and staffName !='' ">
+				AND u.USERNAME = #{staffName}
+			</if>
+			<if test="mobile != null and mobile != '' ">
+				AND u.mobile = #{mobile}
+			</if>
+			<if test="keyword != null and keyword != '' ">
+				AND (t.car_no = #{keyword} or u.USERNAME = #{keyword} or u.mobile = #{keyword})
+			</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.MyCarEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_my_car
+		(
+			`car_no`, 
+			`car_brand`, 
+			`car_color`, 
+			`default_tag`, 
+			`open_id`, 
+			`remark`, 
+			`create_time`, 
+			`create_user_id`
+		)
+		values
+		(
+			#{carNo}, 
+			#{carBrand}, 
+			#{carColor}, 
+			#{defaultTag}, 
+			#{openId}, 
+			#{remark}, 
+			now(),
+			#{createUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.MyCarEntity">
+		update sp_my_car set
+		<if test="carNo != null">`car_no` = #{carNo}, </if>
+		<if test="carBrand != null">`car_brand` = #{carBrand}, </if>
+		<if test="carColor != null">`car_color` = #{carColor}, </if>
+		<if test="defaultTag != null">`default_tag` = #{defaultTag}, </if>
+		<if test="openId != null">`open_id` = #{openId}, </if>
+		<if test="remark != null">`remark` = #{remark}, </if>
+		<if test="updateUserId != null">`update_user_id` = #{updateUserId},</if>
+		 update_time=now()
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_my_car where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_my_car where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

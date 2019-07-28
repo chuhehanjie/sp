@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseOrganizationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseOrganizationEntity" id="baseOrganizationMap">
+        <result property="id" column="id"/>
+        <result property="sdeptcode" column="SDEPTCODE"/>
+        <result property="deptname" column="DEPTNAME"/>
+        <result property="sparentcode" column="SPARENTCODE"/>
+        <result property="orgType" column="ORG_TYPE"/>
+        <result property="levelOrgType" column="LEVEL_ORG_TYPE"/>
+        <result property="saleOrgType" column="SALE_ORG_TYPE"/>
+        <result property="fullname" column="FULLNAME"/>
+        <result property="shortname" column="SHORTNAME"/>
+        <result property="status" column="STATUS"/>
+        <result property="cityCountryType" column="CITY_COUNTRY_TYPE"/>
+        <result property="contractType" column="CONTRACT_TYPE"/>
+        <result property="datatype" column="dataType"/>
+        <result property="hropertype" column="hrOperType"/>
+        <result property="opertype" column="operType"/>
+        <result property="unicode" column="uniCode"/>
+        <result property="ctou" column="ctOu"/>
+        <result property="parentcorpcode" column="parentCorpCode"/>
+        <result property="parentcode" column="parentCode"/>
+        <result property="ctcorptype" column="ctCorpType"/>
+        <result property="ctdepttype" column="ctDeptType"/>
+        <result property="ctorgtype" column="ctOrgType"/>
+        <result property="ctdeptlevel" column="ctDeptLevel"/>
+        <result property="shownum" column="showNum"/>
+        <result property="deptstatus" column="deptStatus"/>
+        <result property="ctorgmanager" column="ctOrgManager"/>
+        <result property="ctvicemanager" column="ctViceManager"/>
+        <result property="isCntrtMgmtUnit" column="IS_CNTRT_MGMT_UNIT"/>
+        <result property="cntrtMgmtModeFlag" column="CNTRT_MGMT_MODE_FLAG"/>
+        <result property="cntrtMgmtUnitCd" column="CNTRT_MGMT_UNIT_CD"/>
+        <result property="cntrtMgmtUnitNm" column="CNTRT_MGMT_UNIT_NM"/>
+        <result property="cntrtMgmtType" column="CNTRT_MGMT_TYPE"/>
+        <result property="cntrtMgmtCheckType" column="CNTRT_MGMT_CHECK_TYPE"/>
+        <result property="cntrtMgmtUnitLevel" column="CNTRT_MGMT_UNIT_LEVEL"/>
+        <result property="cntrtMgmtState" column="CNTRT_MGMT_STATE"/>
+        <result property="parkId" column="park_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseOrganizationEntity">
+		select * from base_organization where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseOrganizationEntity">
+		select * from base_organization where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="sdeptcode != null and sdeptcode !='' ">
+				AND SDEPTCODE = #{sdeptcode}
+			</if>
+				<if test="deptname != null and deptname !='' ">
+				AND DEPTNAME = #{deptname}
+			</if>
+				<if test="sparentcode != null and sparentcode !='' ">
+				AND SPARENTCODE = #{sparentcode}
+			</if>
+				<if test="orgType != null and orgType !='' ">
+				AND ORG_TYPE = #{orgType}
+			</if>
+				<if test="levelOrgType != null and levelOrgType !='' ">
+				AND LEVEL_ORG_TYPE = #{levelOrgType}
+			</if>
+				<if test="saleOrgType != null and saleOrgType !='' ">
+				AND SALE_ORG_TYPE = #{saleOrgType}
+			</if>
+				<if test="fullname != null and fullname !='' ">
+				AND FULLNAME = #{fullname}
+			</if>
+				<if test="shortname != null and shortname !='' ">
+				AND SHORTNAME = #{shortname}
+			</if>
+				<if test="status != null and status !='' ">
+				AND STATUS = #{status}
+			</if>
+				<if test="cityCountryType != null and cityCountryType !='' ">
+				AND CITY_COUNTRY_TYPE = #{cityCountryType}
+			</if>
+				<if test="contractType != null and contractType !='' ">
+				AND CONTRACT_TYPE = #{contractType}
+			</if>
+				<if test="datatype != null and datatype !='' ">
+				AND dataType = #{datatype}
+			</if>
+				<if test="hropertype != null and hropertype !='' ">
+				AND hrOperType = #{hropertype}
+			</if>
+				<if test="opertype != null and opertype !='' ">
+				AND operType = #{opertype}
+			</if>
+				<if test="unicode != null and unicode !='' ">
+				AND uniCode = #{unicode}
+			</if>
+				<if test="ctou != null and ctou !='' ">
+				AND ctOu = #{ctou}
+			</if>
+				<if test="parentcorpcode != null and parentcorpcode !='' ">
+				AND parentCorpCode = #{parentcorpcode}
+			</if>
+				<if test="parentcode != null and parentcode !='' ">
+				AND parentCode = #{parentcode}
+			</if>
+				<if test="ctcorptype != null and ctcorptype !='' ">
+				AND ctCorpType = #{ctcorptype}
+			</if>
+				<if test="ctdepttype != null and ctdepttype !='' ">
+				AND ctDeptType = #{ctdepttype}
+			</if>
+				<if test="ctorgtype != null and ctorgtype !='' ">
+				AND ctOrgType = #{ctorgtype}
+			</if>
+				<if test="ctdeptlevel != null and ctdeptlevel !='' ">
+				AND ctDeptLevel = #{ctdeptlevel}
+			</if>
+				<if test="shownum != null and shownum !='' ">
+				AND showNum = #{shownum}
+			</if>
+				<if test="deptstatus != null and deptstatus !='' ">
+				AND deptStatus = #{deptstatus}
+			</if>
+				<if test="ctorgmanager != null and ctorgmanager !='' ">
+				AND ctOrgManager = #{ctorgmanager}
+			</if>
+				<if test="ctvicemanager != null and ctvicemanager !='' ">
+				AND ctViceManager = #{ctvicemanager}
+			</if>
+				<if test="isCntrtMgmtUnit != null and isCntrtMgmtUnit !='' ">
+				AND IS_CNTRT_MGMT_UNIT = #{isCntrtMgmtUnit}
+			</if>
+				<if test="cntrtMgmtModeFlag != null and cntrtMgmtModeFlag !='' ">
+				AND CNTRT_MGMT_MODE_FLAG = #{cntrtMgmtModeFlag}
+			</if>
+				<if test="cntrtMgmtUnitCd != null and cntrtMgmtUnitCd !='' ">
+				AND CNTRT_MGMT_UNIT_CD = #{cntrtMgmtUnitCd}
+			</if>
+				<if test="cntrtMgmtUnitNm != null and cntrtMgmtUnitNm !='' ">
+				AND CNTRT_MGMT_UNIT_NM = #{cntrtMgmtUnitNm}
+			</if>
+				<if test="cntrtMgmtType != null and cntrtMgmtType !='' ">
+				AND CNTRT_MGMT_TYPE = #{cntrtMgmtType}
+			</if>
+				<if test="cntrtMgmtCheckType != null and cntrtMgmtCheckType !='' ">
+				AND CNTRT_MGMT_CHECK_TYPE = #{cntrtMgmtCheckType}
+			</if>
+				<if test="cntrtMgmtUnitLevel != null and cntrtMgmtUnitLevel !='' ">
+				AND CNTRT_MGMT_UNIT_LEVEL = #{cntrtMgmtUnitLevel}
+			</if>
+				<if test="cntrtMgmtState != null and cntrtMgmtState !='' ">
+				AND CNTRT_MGMT_STATE = #{cntrtMgmtState}
+			</if>
+			<if test="park_id != null and park_id !='' ">
+				AND park_id = #{park_id}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_organization where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="sdeptcode != null and sdeptcode !='' ">
+                AND SDEPTCODE = #{sdeptcode}
+            </if>
+				<if test="deptname != null and deptname !='' ">
+                AND DEPTNAME = #{deptname}
+            </if>
+				<if test="sparentcode != null and sparentcode !='' ">
+                AND SPARENTCODE = #{sparentcode}
+            </if>
+				<if test="orgType != null and orgType !='' ">
+                AND ORG_TYPE = #{orgType}
+            </if>
+				<if test="levelOrgType != null and levelOrgType !='' ">
+                AND LEVEL_ORG_TYPE = #{levelOrgType}
+            </if>
+				<if test="saleOrgType != null and saleOrgType !='' ">
+                AND SALE_ORG_TYPE = #{saleOrgType}
+            </if>
+				<if test="fullname != null and fullname !='' ">
+                AND FULLNAME = #{fullname}
+            </if>
+				<if test="shortname != null and shortname !='' ">
+                AND SHORTNAME = #{shortname}
+            </if>
+				<if test="status != null and status !='' ">
+                AND STATUS = #{status}
+            </if>
+				<if test="cityCountryType != null and cityCountryType !='' ">
+                AND CITY_COUNTRY_TYPE = #{cityCountryType}
+            </if>
+				<if test="contractType != null and contractType !='' ">
+                AND CONTRACT_TYPE = #{contractType}
+            </if>
+				<if test="datatype != null and datatype !='' ">
+                AND dataType = #{datatype}
+            </if>
+				<if test="hropertype != null and hropertype !='' ">
+                AND hrOperType = #{hropertype}
+            </if>
+				<if test="opertype != null and opertype !='' ">
+                AND operType = #{opertype}
+            </if>
+				<if test="unicode != null and unicode !='' ">
+                AND uniCode = #{unicode}
+            </if>
+				<if test="ctou != null and ctou !='' ">
+                AND ctOu = #{ctou}
+            </if>
+				<if test="parentcorpcode != null and parentcorpcode !='' ">
+                AND parentCorpCode = #{parentcorpcode}
+            </if>
+				<if test="parentcode != null and parentcode !='' ">
+                AND parentCode = #{parentcode}
+            </if>
+				<if test="ctcorptype != null and ctcorptype !='' ">
+                AND ctCorpType = #{ctcorptype}
+            </if>
+				<if test="ctdepttype != null and ctdepttype !='' ">
+                AND ctDeptType = #{ctdepttype}
+            </if>
+				<if test="ctorgtype != null and ctorgtype !='' ">
+                AND ctOrgType = #{ctorgtype}
+            </if>
+				<if test="ctdeptlevel != null and ctdeptlevel !='' ">
+                AND ctDeptLevel = #{ctdeptlevel}
+            </if>
+				<if test="shownum != null and shownum !='' ">
+                AND showNum = #{shownum}
+            </if>
+				<if test="deptstatus != null and deptstatus !='' ">
+                AND deptStatus = #{deptstatus}
+            </if>
+				<if test="ctorgmanager != null and ctorgmanager !='' ">
+                AND ctOrgManager = #{ctorgmanager}
+            </if>
+				<if test="ctvicemanager != null and ctvicemanager !='' ">
+                AND ctViceManager = #{ctvicemanager}
+            </if>
+				<if test="isCntrtMgmtUnit != null and isCntrtMgmtUnit !='' ">
+                AND IS_CNTRT_MGMT_UNIT = #{isCntrtMgmtUnit}
+            </if>
+				<if test="cntrtMgmtModeFlag != null and cntrtMgmtModeFlag !='' ">
+                AND CNTRT_MGMT_MODE_FLAG = #{cntrtMgmtModeFlag}
+            </if>
+				<if test="cntrtMgmtUnitCd != null and cntrtMgmtUnitCd !='' ">
+                AND CNTRT_MGMT_UNIT_CD = #{cntrtMgmtUnitCd}
+            </if>
+				<if test="cntrtMgmtUnitNm != null and cntrtMgmtUnitNm !='' ">
+                AND CNTRT_MGMT_UNIT_NM = #{cntrtMgmtUnitNm}
+            </if>
+				<if test="cntrtMgmtType != null and cntrtMgmtType !='' ">
+                AND CNTRT_MGMT_TYPE = #{cntrtMgmtType}
+            </if>
+				<if test="cntrtMgmtCheckType != null and cntrtMgmtCheckType !='' ">
+                AND CNTRT_MGMT_CHECK_TYPE = #{cntrtMgmtCheckType}
+            </if>
+				<if test="cntrtMgmtUnitLevel != null and cntrtMgmtUnitLevel !='' ">
+                AND CNTRT_MGMT_UNIT_LEVEL = #{cntrtMgmtUnitLevel}
+            </if>
+				<if test="cntrtMgmtState != null and cntrtMgmtState !='' ">
+                AND CNTRT_MGMT_STATE = #{cntrtMgmtState}
+            </if>
+			<if test="park_id != null and park_id !='' ">
+				AND park_id = #{park_id}
+			</if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseOrganizationEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_organization
+		(
+			`SDEPTCODE`, 
+			`DEPTNAME`, 
+			`SPARENTCODE`, 
+			`ORG_TYPE`, 
+			`LEVEL_ORG_TYPE`, 
+			`SALE_ORG_TYPE`, 
+			`FULLNAME`, 
+			`SHORTNAME`, 
+			`STATUS`, 
+			`CITY_COUNTRY_TYPE`, 
+			`CONTRACT_TYPE`, 
+			`dataType`, 
+			`hrOperType`, 
+			`operType`, 
+			`uniCode`, 
+			`ctOu`, 
+			`parentCorpCode`, 
+			`parentCode`, 
+			`ctCorpType`, 
+			`ctDeptType`, 
+			`ctOrgType`, 
+			`ctDeptLevel`, 
+			`showNum`, 
+			`deptStatus`, 
+			`ctOrgManager`, 
+			`ctViceManager`, 
+			`IS_CNTRT_MGMT_UNIT`, 
+			`CNTRT_MGMT_MODE_FLAG`, 
+			`CNTRT_MGMT_UNIT_CD`, 
+			`CNTRT_MGMT_UNIT_NM`, 
+			`CNTRT_MGMT_TYPE`, 
+			`CNTRT_MGMT_CHECK_TYPE`, 
+			`CNTRT_MGMT_UNIT_LEVEL`, 
+			`CNTRT_MGMT_STATE`,
+			`park_id`
+		)
+		values
+		(
+			#{sdeptcode}, 
+			#{deptname}, 
+			#{sparentcode}, 
+			#{orgType}, 
+			#{levelOrgType}, 
+			#{saleOrgType}, 
+			#{fullname}, 
+			#{shortname}, 
+			#{status}, 
+			#{cityCountryType}, 
+			#{contractType}, 
+			#{datatype}, 
+			#{hropertype}, 
+			#{opertype}, 
+			#{unicode}, 
+			#{ctou}, 
+			#{parentcorpcode}, 
+			#{parentcode}, 
+			#{ctcorptype}, 
+			#{ctdepttype}, 
+			#{ctorgtype}, 
+			#{ctdeptlevel}, 
+			#{shownum}, 
+			#{deptstatus}, 
+			#{ctorgmanager}, 
+			#{ctvicemanager}, 
+			#{isCntrtMgmtUnit}, 
+			#{cntrtMgmtModeFlag}, 
+			#{cntrtMgmtUnitCd}, 
+			#{cntrtMgmtUnitNm}, 
+			#{cntrtMgmtType}, 
+			#{cntrtMgmtCheckType}, 
+			#{cntrtMgmtUnitLevel}, 
+			#{cntrtMgmtState},
+			#{parkId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseOrganizationEntity">
+		update base_organization 
+		<set>
+			<if test="sdeptcode != null">`SDEPTCODE` = #{sdeptcode}, </if>
+			<if test="deptname != null">`DEPTNAME` = #{deptname}, </if>
+			<if test="sparentcode != null">`SPARENTCODE` = #{sparentcode}, </if>
+			<if test="orgType != null">`ORG_TYPE` = #{orgType}, </if>
+			<if test="levelOrgType != null">`LEVEL_ORG_TYPE` = #{levelOrgType}, </if>
+			<if test="saleOrgType != null">`SALE_ORG_TYPE` = #{saleOrgType}, </if>
+			<if test="fullname != null">`FULLNAME` = #{fullname}, </if>
+			<if test="shortname != null">`SHORTNAME` = #{shortname}, </if>
+			<if test="status != null">`STATUS` = #{status}, </if>
+			<if test="cityCountryType != null">`CITY_COUNTRY_TYPE` = #{cityCountryType}, </if>
+			<if test="contractType != null">`CONTRACT_TYPE` = #{contractType}, </if>
+			<if test="datatype != null">`dataType` = #{datatype}, </if>
+			<if test="hropertype != null">`hrOperType` = #{hropertype}, </if>
+			<if test="opertype != null">`operType` = #{opertype}, </if>
+			<if test="unicode != null">`uniCode` = #{unicode}, </if>
+			<if test="ctou != null">`ctOu` = #{ctou}, </if>
+			<if test="parentcorpcode != null">`parentCorpCode` = #{parentcorpcode}, </if>
+			<if test="parentcode != null">`parentCode` = #{parentcode}, </if>
+			<if test="ctcorptype != null">`ctCorpType` = #{ctcorptype}, </if>
+			<if test="ctdepttype != null">`ctDeptType` = #{ctdepttype}, </if>
+			<if test="ctorgtype != null">`ctOrgType` = #{ctorgtype}, </if>
+			<if test="ctdeptlevel != null">`ctDeptLevel` = #{ctdeptlevel}, </if>
+			<if test="shownum != null">`showNum` = #{shownum}, </if>
+			<if test="deptstatus != null">`deptStatus` = #{deptstatus}, </if>
+			<if test="ctorgmanager != null">`ctOrgManager` = #{ctorgmanager}, </if>
+			<if test="ctvicemanager != null">`ctViceManager` = #{ctvicemanager}, </if>
+			<if test="isCntrtMgmtUnit != null">`IS_CNTRT_MGMT_UNIT` = #{isCntrtMgmtUnit}, </if>
+			<if test="cntrtMgmtModeFlag != null">`CNTRT_MGMT_MODE_FLAG` = #{cntrtMgmtModeFlag}, </if>
+			<if test="cntrtMgmtUnitCd != null">`CNTRT_MGMT_UNIT_CD` = #{cntrtMgmtUnitCd}, </if>
+			<if test="cntrtMgmtUnitNm != null">`CNTRT_MGMT_UNIT_NM` = #{cntrtMgmtUnitNm}, </if>
+			<if test="cntrtMgmtType != null">`CNTRT_MGMT_TYPE` = #{cntrtMgmtType}, </if>
+			<if test="cntrtMgmtCheckType != null">`CNTRT_MGMT_CHECK_TYPE` = #{cntrtMgmtCheckType}, </if>
+			<if test="cntrtMgmtUnitLevel != null">`CNTRT_MGMT_UNIT_LEVEL` = #{cntrtMgmtUnitLevel}, </if>
+			<if test="cntrtMgmtState != null">`CNTRT_MGMT_STATE` = #{cntrtMgmtState}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_organization where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_organization where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

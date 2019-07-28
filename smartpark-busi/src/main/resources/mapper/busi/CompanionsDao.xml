@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.CompanionsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.CompanionsEntity" id="companionsMap">
+        <result property="id" column="id"/>
+        <result property="reservationId" column="reservation_id"/>
+        <result property="name" column="name"/>
+        <result property="physicalCardId" column="physical_card_id"/>
+        <result property="idcardNo" column="idcard_no"/>
+        <result property="phone" column="phone"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.CompanionsEntity">
+		select * from sp_companions where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.CompanionsEntity">
+		select * from sp_companions where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="reservationId != null and reservationId !='' ">
+				AND reservation_id = #{reservationId}
+			</if>
+				<if test="name != null and name !='' ">
+				AND name = #{name}
+			</if>
+				<if test="physicalCardId != null and physicalCardId !='' ">
+				AND physical_card_id = #{physicalCardId}
+			</if>
+				<if test="idcardNo != null and idcardNo !='' ">
+				AND idcard_no = #{idcardNo}
+			</if>
+				<if test="phone != null and phone !='' ">
+				AND phone = #{phone}
+			</if>
+				<if test="photoUrl != null and photoUrl !='' ">
+				AND photo_url = #{photoUrl}
+			</if>
+				<if test="ext1 != null and ext1 !='' ">
+				AND ext1 = #{ext1}
+			</if>
+				<if test="ext2 != null and ext2 !='' ">
+				AND ext2 = #{ext2}
+			</if>
+				<if test="ext3 != null and ext3 !='' ">
+				AND ext3 = #{ext3}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_companions where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="reservationId != null and reservationId !='' ">
+                AND reservation_id = #{reservationId}
+            </if>
+				<if test="name != null and name !='' ">
+                AND name = #{name}
+            </if>
+				<if test="physicalCardId != null and physicalCardId !='' ">
+                AND physical_card_id = #{physicalCardId}
+            </if>
+				<if test="idcardNo != null and idcardNo !='' ">
+                AND idcard_no = #{idcardNo}
+            </if>
+				<if test="phone != null and phone !='' ">
+                AND phone = #{phone}
+            </if>
+				<if test="photoUrl != null and photoUrl !='' ">
+                AND photo_url = #{photoUrl}
+            </if>
+				<if test="ext1 != null and ext1 !='' ">
+                AND ext1 = #{ext1}
+            </if>
+				<if test="ext2 != null and ext2 !='' ">
+                AND ext2 = #{ext2}
+            </if>
+				<if test="ext3 != null and ext3 !='' ">
+                AND ext3 = #{ext3}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.CompanionsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_companions
+		(
+			`reservation_id`, 
+			`name`, 
+			`physical_card_id`, 
+			`idcard_no`, 
+			`phone`, 
+			`photo_url`, 
+			`ext1`, 
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{reservationId}, 
+			#{name}, 
+			#{physicalCardId}, 
+			#{idcardNo}, 
+			#{phone}, 
+			#{photoUrl}, 
+			#{ext1}, 
+			#{ext2}, 
+			#{ext3}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.CompanionsEntity">
+		update sp_companions 
+		<set>
+			<if test="reservationId != null">`reservation_id` = #{reservationId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="physicalCardId != null">`physical_card_id` = #{physicalCardId}, </if>
+			<if test="idcardNo != null">`idcard_no` = #{idcardNo}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="photoUrl != null">`photo_url` = #{photoUrl}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_companions where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_companions where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.DoorControllerDao">
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.DoorControllerEntity">
+		select * from sp_door_controller where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.DoorControllerEntity">
+		select * from sp_door_controller where 1=1
+		<if test="id != null and id !='' ">
+			AND id = #{id}
+		</if>
+		<if test="controllerName != null and controllerName !='' ">
+			AND controller_name = #{controllerName}
+		</if>
+		<if test="controllerNo != null and controllerNo !='' ">
+			AND controller_no = #{controllerNo}
+		</if>
+		<if test="controllerIp != null and controllerIp !='' ">
+			AND controller_ip = #{controllerIp}
+		</if>
+		<if test="macAddr != null and macAddr !='' ">
+			AND mac_addr = #{macAddr}
+		</if>
+		<if test="controllerPort != null and controllerPort !='' ">
+			AND controller_port = #{controllerPort}
+		</if>
+		<if test="status != null and status !='' ">
+			AND status = #{status}
+		</if>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from sp_door_controller where 1=1
+		<if test="id != null and id !='' ">
+			AND id = #{id}
+		</if>
+		<if test="controllerName != null and controllerName !='' ">
+			AND controller_name = #{controllerName}
+		</if>
+		<if test="controllerNo != null and controllerNo !='' ">
+			AND controller_no = #{controllerNo}
+		</if>
+		<if test="controllerIp != null and controllerIp !='' ">
+			AND controller_ip = #{controllerIp}
+		</if>
+		<if test="macAddr != null and macAddr !='' ">
+			AND mac_addr = #{macAddr}
+		</if>
+		<if test="controllerPort != null and controllerPort !='' ">
+			AND controller_port = #{controllerPort}
+		</if>
+		<if test="status != null and status !='' ">
+			AND status = #{status}
+		</if>
+	</select>
+
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.DoorControllerEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_door_controller
+		(
+		`controller_name`,
+		`controller_no`,
+		`controller_ip`,
+		`mac_addr`,
+		`controller_port`,
+		`status`,
+		`create_time`,
+		`create_user_id`,
+		`update_time`,
+		`update_user_id`
+		)
+		values
+		(
+		#{controllerName},
+		#{controllerNo},
+		#{controllerIp},
+		#{macAddr},
+		#{controllerPort},
+		#{status},
+		#{createTime},
+		#{createUserId},
+		#{updateTime},
+		#{updateUserId}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.DoorControllerEntity">
+		update sp_door_controller
+		<set>
+			<if test="controllerName != null">`controller_name` = #{controllerName}, </if>
+			<if test="controllerNo != null">`controller_no` = #{controllerNo}, </if>
+			<if test="controllerIp != null">`controller_ip` = #{controllerIp}, </if>
+			<if test="macAddr != null">`mac_addr` = #{macAddr}, </if>
+			<if test="controllerPort != null">`controller_port` = #{controllerPort}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from sp_door_controller where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from sp_door_controller where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!-- 根据门禁id查询门禁控制器信息 -->
+	<select id="queryDoorControllerByDoorId" resultType="com.chris.smartpark.busi.entity.DoorControllerEntity" parameterType="java.util.Map" >
+		select dc.*,dr.read_no as readerNo,d.ext1 as mappingDoorId
+		from sp_door_controller dc
+		INNER JOIN sp_door_readno dr ON dr.controller_id = dc.id
+		INNER JOIN sp_door d ON d.door_readno_id = dr.id
+		where d.id =#{doorId,jdbcType=BIGINT}
+		<if test="status != null and status != ''">
+			and status =#{status,jdbcType=VARCHAR}
+		</if>
+		<if test="openId != null and openId != ''">
+			and d.id in (
+			select gd.door_id from sp_group_door gd
+			INNER JOIN sp_group_station  gs ON gs.group_id = gd.group_id
+			INNER JOIN sp_user_station us ON us.station_id = gs.station_id
+			INNER JOIN base_staff staff ON staff.EMPLOYNUM = us.work_no
+			INNER JOIN tb_user tu ON tu.mobile = staff.MOBILE
+			where tu.open_id = #{openId}
+			)
+		</if>
+	</select>
+</mapper>

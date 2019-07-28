@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.ibms.dao.IBMSCollectionAttrDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.ibms.entity.IBMSCollectionAttrEntity" id="ibmsCollectionAttrMap">
+        <result property="id" column="id"/>
+        <result property="attrName" column="attr_name"/>
+        <result property="attrUnit" column="attr_unit"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.ibms.entity.IBMSCollectionAttrEntity">
+		select * from ibms_collection_attr where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.ibms.entity.IBMSCollectionAttrEntity">
+		select * from ibms_collection_attr where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="attrName != null and attrName !='' ">
+				AND attr_name = #{attrName}
+			</if>
+				<if test="attrUnit != null and attrUnit !='' ">
+				AND attr_unit = #{attrUnit}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ibms_collection_attr where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="attrName != null and attrName !='' ">
+                AND attr_name = #{attrName}
+            </if>
+				<if test="attrUnit != null and attrUnit !='' ">
+                AND attr_unit = #{attrUnit}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.ibms.entity.IBMSCollectionAttrEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into ibms_collection_attr
+		(
+			`attr_name`, 
+			`attr_unit`
+		)
+		values
+		(
+			#{attrName}, 
+			#{attrUnit}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.ibms.entity.IBMSCollectionAttrEntity">
+		update ibms_collection_attr 
+		<set>
+			<if test="attrName != null">`attr_name` = #{attrName}, </if>
+			<if test="attrUnit != null">`attr_unit` = #{attrUnit}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from ibms_collection_attr where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ibms_collection_attr where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

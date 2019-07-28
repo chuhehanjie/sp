@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.WorkOrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.WorkOrderEntity" id="workOrderMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="workOrderType" column="work_order_type"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.WorkOrderEntity">
+		select * from sp_work_order where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.WorkOrderEntity">
+		SELECT t.*,u.username AS createUserName,u2.username AS updateUserName FROM sp_work_order t
+		LEFT JOIN tb_user u ON t.create_user_id = u.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		WHERE 1=1
+			<if test="id != null and id !='' ">
+				AND t.id = #{id}
+			</if>
+				<if test="title != null and title !='' ">
+				AND t.title = #{title}
+			</if>
+				<if test="content != null and content !='' ">
+				AND t.content = #{content}
+			</if>
+				<if test="workOrderType != null and workOrderType !='' ">
+				AND t.work_order_type = #{workOrderType}
+			</if>
+            <if test="status != null and status !='' ">
+				AND t.status = #{status}
+			</if>
+            <if test="createUserId != null and createUserId !='' ">
+				AND t.create_user_id = #{createUserId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(t.id) from sp_work_order t
+		LEFT JOIN tb_user u ON t.create_user_id = u.user_id
+		LEFT JOIN tb_user u2 ON t.update_user_id = u2.user_id
+		where 1=1
+			<if test="id != null and id !='' ">
+                AND t.id = #{id}
+            </if>
+				<if test="title != null and title !='' ">
+                AND t.title = #{title}
+            </if>
+				<if test="content != null and content !='' ">
+                AND t.content = #{content}
+            </if>
+				<if test="workOrderType != null and workOrderType !='' ">
+                AND t.work_order_type = #{workOrderType}
+            </if>
+				<if test="status != null and status !='' ">
+                AND t.status = #{status}
+            </if>
+            <if test="createUserId != null and createUserId !='' ">
+                AND t.create_user_id = #{createUserId}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.WorkOrderEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_work_order
+		(
+			`title`, 
+			`content`, 
+			`work_order_type`, 
+			`status`, 
+			`ext1`,
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{workOrderType}, 
+			#{status}, 
+			#{ext1},
+			#{ext2}, 
+			#{ext3}, 
+			now(),
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.WorkOrderEntity">
+		update sp_work_order 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="workOrderType != null">`work_order_type` = #{workOrderType}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId},</if>
+			`update_time` = now()
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_work_order where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_work_order where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

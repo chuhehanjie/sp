@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.AuthenticationRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.AuthenticationRecordEntity" id="authenticationRecordMap">
+        <result property="id" column="id"/>
+        <result property="reservationId" column="reservation_id"/>
+        <result property="visitorId" column="visitor_id"/>
+        <result property="applyBeginTime" column="apply_begin_time"/>
+        <result property="applyEndTime" column="apply_end_time"/>
+        <result property="authBeginTime" column="auth_begin_time"/>
+        <result property="authEndTime" column="auth_end_time"/>
+        <result property="status" column="status"/>
+        <result property="authCode" column="auth_code"/>
+        <result property="authDesc" column="auth_desc"/>
+        <result property="authTime" column="auth_time"/>
+        <result property="remark" column="remark"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.AuthenticationRecordEntity">
+		select * from sp_authentication_record where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.AuthenticationRecordEntity">
+		select * from sp_authentication_record where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="reservationId != null and reservationId !='' ">
+				AND reservation_id = #{reservationId}
+			</if>
+				<if test="visitorId != null and visitorId !='' ">
+				AND visitor_id = #{visitorId}
+			</if>
+				<if test="applyBeginTime != null and applyBeginTime !='' ">
+				AND apply_begin_time = #{applyBeginTime}
+			</if>
+				<if test="applyEndTime != null and applyEndTime !='' ">
+				AND apply_end_time = #{applyEndTime}
+			</if>
+				<if test="authBeginTime != null and authBeginTime !='' ">
+				AND auth_begin_time = #{authBeginTime}
+			</if>
+				<if test="authEndTime != null and authEndTime !='' ">
+				AND auth_end_time = #{authEndTime}
+			</if>
+				<if test="status != null and status !='' ">
+				AND status = #{status}
+			</if>
+				<if test="authCode != null and authCode !='' ">
+				AND auth_code = #{authCode}
+			</if>
+				<if test="authDesc != null and authDesc !='' ">
+				AND auth_desc = #{authDesc}
+			</if>
+				<if test="authTime != null and authTime !='' ">
+				AND auth_time = #{authTime}
+			</if>
+				<if test="remark != null and remark !='' ">
+				AND remark = #{remark}
+			</if>
+				<if test="ext1 != null and ext1 !='' ">
+				AND ext1 = #{ext1}
+			</if>
+				<if test="ext2 != null and ext2 !='' ">
+				AND ext2 = #{ext2}
+			</if>
+				<if test="ext3 != null and ext3 !='' ">
+				AND ext3 = #{ext3}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_authentication_record where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="reservationId != null and reservationId !='' ">
+                AND reservation_id = #{reservationId}
+            </if>
+				<if test="visitorId != null and visitorId !='' ">
+                AND visitor_id = #{visitorId}
+            </if>
+				<if test="applyBeginTime != null and applyBeginTime !='' ">
+                AND apply_begin_time = #{applyBeginTime}
+            </if>
+				<if test="applyEndTime != null and applyEndTime !='' ">
+                AND apply_end_time = #{applyEndTime}
+            </if>
+				<if test="authBeginTime != null and authBeginTime !='' ">
+                AND auth_begin_time = #{authBeginTime}
+            </if>
+				<if test="authEndTime != null and authEndTime !='' ">
+                AND auth_end_time = #{authEndTime}
+            </if>
+				<if test="status != null and status !='' ">
+                AND status = #{status}
+            </if>
+				<if test="authCode != null and authCode !='' ">
+                AND auth_code = #{authCode}
+            </if>
+				<if test="authDesc != null and authDesc !='' ">
+                AND auth_desc = #{authDesc}
+            </if>
+				<if test="authTime != null and authTime !='' ">
+                AND auth_time = #{authTime}
+            </if>
+				<if test="remark != null and remark !='' ">
+                AND remark = #{remark}
+            </if>
+				<if test="ext1 != null and ext1 !='' ">
+                AND ext1 = #{ext1}
+            </if>
+				<if test="ext2 != null and ext2 !='' ">
+                AND ext2 = #{ext2}
+            </if>
+				<if test="ext3 != null and ext3 !='' ">
+                AND ext3 = #{ext3}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.AuthenticationRecordEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_authentication_record
+		(
+			`reservation_id`, 
+			`visitor_id`, 
+			`apply_begin_time`, 
+			`apply_end_time`, 
+			`auth_begin_time`, 
+			`auth_end_time`, 
+			`status`, 
+			`auth_code`, 
+			`auth_desc`, 
+			`auth_time`, 
+			`remark`, 
+			`ext1`, 
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{reservationId}, 
+			#{visitorId}, 
+			#{applyBeginTime}, 
+			#{applyEndTime}, 
+			#{authBeginTime}, 
+			#{authEndTime}, 
+			#{status}, 
+			#{authCode}, 
+			#{authDesc}, 
+			#{authTime}, 
+			#{remark}, 
+			#{ext1}, 
+			#{ext2}, 
+			#{ext3}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.AuthenticationRecordEntity">
+		update sp_authentication_record 
+		<set>
+			<if test="reservationId != null">`reservation_id` = #{reservationId}, </if>
+			<if test="visitorId != null">`visitor_id` = #{visitorId}, </if>
+			<if test="applyBeginTime != null">`apply_begin_time` = #{applyBeginTime}, </if>
+			<if test="applyEndTime != null">`apply_end_time` = #{applyEndTime}, </if>
+			<if test="authBeginTime != null">`auth_begin_time` = #{authBeginTime}, </if>
+			<if test="authEndTime != null">`auth_end_time` = #{authEndTime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="authCode != null">`auth_code` = #{authCode}, </if>
+			<if test="authDesc != null">`auth_desc` = #{authDesc}, </if>
+			<if test="authTime != null">`auth_time` = #{authTime}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_authentication_record where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_authentication_record where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

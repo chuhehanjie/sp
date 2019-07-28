@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseBuildingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseBuildingEntity" id="baseBuildingMap">
+        <result property="id" column="id"/>
+        <result property="buildingName" column="building_name"/>
+        <result property="address" column="address"/>
+        <result property="floors" column="floors"/>
+        <result property="parkId" column="park_id"/>
+        <result property="areaId" column="area_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseBuildingEntity">
+		select * from base_building where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseBuildingEntity">
+		select * from base_building where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="buildingName != null and buildingName !='' ">
+				AND building_name = #{buildingName}
+			</if>
+				<if test="address != null and address !='' ">
+				AND address = #{address}
+			</if>
+				<if test="floors != null and floors !='' ">
+				AND floors = #{floors}
+			</if>
+				<if test="parkId != null and parkId !='' ">
+				AND park_id = #{parkId}
+			</if>
+				<if test="areaId != null and areaId !='' ">
+				AND area_id = #{areaId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_building where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="buildingName != null and buildingName !='' ">
+                AND building_name = #{buildingName}
+            </if>
+				<if test="address != null and address !='' ">
+                AND address = #{address}
+            </if>
+				<if test="floors != null and floors !='' ">
+                AND floors = #{floors}
+            </if>
+				<if test="parkId != null and parkId !='' ">
+                AND park_id = #{parkId}
+            </if>
+				<if test="areaId != null and areaId !='' ">
+                AND area_id = #{areaId}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseBuildingEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_building
+		(
+			`building_name`, 
+			`address`, 
+			`floors`, 
+			`park_id`, 
+			`area_id`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{buildingName}, 
+			#{address}, 
+			#{floors}, 
+			#{parkId}, 
+			#{areaId}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseBuildingEntity">
+		update base_building 
+		<set>
+			<if test="buildingName != null">`building_name` = #{buildingName}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="floors != null">`floors` = #{floors}, </if>
+			<if test="parkId != null">`park_id` = #{parkId}, </if>
+			<if test="areaId != null">`area_id` = #{areaId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_building where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_building where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

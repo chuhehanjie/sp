@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.DoorDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="com.chris.smartpark.busi.entity.DoorEntity" id="doorMap">
+		<result property="id" column="id"/>
+		<result property="doorName" column="door_name"/>
+		<result property="doorNo" column="door_no"/>
+		<result property="doorType" column="door_type"/>
+		<result property="roomId" column="room_id"/>
+		<result property="floorId" column="floor_id"/>
+		<result property="companyId" column="company_id"/>
+		<result property="deptId" column="dept_id"/>
+		<result property="status" column="status"/>
+		<result property="remark" column="remark"/>
+		<result property="ext1" column="ext1"/>
+		<result property="ext2" column="ext2"/>
+		<result property="ext3" column="ext3"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="updateUserId" column="update_user_id"/>
+		<result property="doorReadnoId" column="door_readno_id"/>
+	</resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.DoorEntity">
+		select * from sp_door where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.DoorEntity">
+		select * from sp_door where 1=1
+		<if test="id != null and id !='' ">
+			AND id = #{id}
+		</if>
+		<if test="doorName != null and doorName !='' ">
+			AND door_name = #{doorName}
+		</if>
+		<if test="doorNo != null and doorNo !='' ">
+			AND door_no = #{doorNo}
+		</if>
+		<if test="doorType != null and doorType !='' ">
+			AND door_type = #{doorType}
+		</if>
+		<if test="roomId != null and roomId !='' ">
+			AND room_id = #{roomId}
+		</if>
+		<if test="floorId != null and floorId !='' ">
+			AND floor_id = #{floorId}
+		</if>
+		<if test="companyId != null and companyId !='' ">
+			AND company_id = #{companyId}
+		</if>
+		<if test="deptId != null and deptId !='' ">
+			AND dept_id = #{deptId}
+		</if>
+		<if test="status != null and status !='' ">
+			AND status = #{status}
+		</if>
+		<if test="remark != null and remark !='' ">
+			AND remark = #{remark}
+		</if>
+		<if test="ext1 != null and ext1 !='' ">
+			AND ext1 = #{ext1}
+		</if>
+		<if test="ext2 != null and ext2 !='' ">
+			AND ext2 = #{ext2}
+		</if>
+		<if test="ext3 != null and ext3 !='' ">
+			AND ext3 = #{ext3}
+		</if>
+		<if test="doorReadnoId != null and doorReadnoId !='' ">
+			AND door_readno_id = #{doorReadnoId}
+		</if>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from sp_door where 1=1
+		<if test="id != null and id !='' ">
+			AND id = #{id}
+		</if>
+		<if test="doorName != null and doorName !='' ">
+			AND door_name = #{doorName}
+		</if>
+		<if test="doorNo != null and doorNo !='' ">
+			AND door_no = #{doorNo}
+		</if>
+		<if test="doorType != null and doorType !='' ">
+			AND door_type = #{doorType}
+		</if>
+		<if test="roomId != null and roomId !='' ">
+			AND room_id = #{roomId}
+		</if>
+		<if test="floorId != null and floorId !='' ">
+			AND floor_id = #{floorId}
+		</if>
+		<if test="companyId != null and companyId !='' ">
+			AND company_id = #{companyId}
+		</if>
+		<if test="deptId != null and deptId !='' ">
+			AND dept_id = #{deptId}
+		</if>
+		<if test="status != null and status !='' ">
+			AND status = #{status}
+		</if>
+		<if test="remark != null and remark !='' ">
+			AND remark = #{remark}
+		</if>
+		<if test="ext1 != null and ext1 !='' ">
+			AND ext1 = #{ext1}
+		</if>
+		<if test="ext2 != null and ext2 !='' ">
+			AND ext2 = #{ext2}
+		</if>
+		<if test="ext3 != null and ext3 !='' ">
+			AND ext3 = #{ext3}
+		</if>
+		<if test="doorReadnoId != null and doorReadnoId !='' ">
+			AND door_readno_id = #{doorReadnoId}
+		</if>
+	</select>
+
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.DoorEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_door
+		(
+		`door_name`,
+		`door_no`,
+		`door_type`,
+		`room_id`,
+		`floor_id`,
+		`company_id`,
+		`dept_id`,
+		`status`,
+		`remark`,
+		`ext1`,
+		`ext2`,
+		`ext3`,
+		`create_time`,
+		`create_user_id`,
+		`update_time`,
+		`update_user_id`,
+		`door_readno_id`
+		)
+		values
+		(
+		#{doorName},
+		#{doorNo},
+		#{doorType},
+		#{roomId},
+		#{floorId},
+		#{companyId},
+		#{deptId},
+		#{status},
+		#{remark},
+		#{ext1},
+		#{ext2},
+		#{ext3},
+		#{createTime},
+		#{createUserId},
+		#{updateTime},
+		#{updateUserId},
+		#{doorReadnoId}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.DoorEntity">
+		update sp_door
+		<set>
+			<if test="doorName != null">`door_name` = #{doorName}, </if>
+			<if test="doorNo != null">`door_no` = #{doorNo}, </if>
+			<if test="doorType != null">`door_type` = #{doorType}, </if>
+			<if test="roomId != null">`room_id` = #{roomId}, </if>
+			<if test="floorId != null">`floor_id` = #{floorId}, </if>
+			<if test="companyId != null">`company_id` = #{companyId}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}, </if>
+			<if test="doorReadnoId != null">`door_readno_id` = #{doorReadnoId}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from sp_door where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from sp_door where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!-- 查询用户门禁权限 -->
+	<select id="queryUserDoor" resultMap="doorMap" parameterType="java.util.Map" >
+		select c.*
+		from sp_user_station a,sp_group_station b,sp_group_door gd,sp_door c,tb_user d,base_staff e
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			a.station_id=b.station_id and b.group_id = gd.group_id and gd.door_id=c.id and d.mobile = e.mobile and e.EMPLOYNUM=a.work_no
+			<if test="id != null and id != ''">
+				and d.user_id =#{id,jdbcType=BIGINT}
+			</if>
+			<if test="openId != null and openId != ''">
+				and d.open_id =#{openId,jdbcType=VARCHAR}
+			</if>
+			<if test="floorId != null and floorId != ''">
+				and c.floor_id =#{floorId,jdbcType=INTEGER}
+			</if>
+		</trim>
+		order by c.floor_id,door_no
+	</select>
+
+	<select id="queryHasPermissionDoorsByOpenId" resultType="com.chris.smartpark.busi.dto.DoorLevelDTO" parameterType="java.lang.String">
+		SELECT
+		d.id AS doorId,
+		d.door_name AS doorName,
+		f.id AS floorId,
+		f.floor_name AS floorName,
+		b.id AS buildingId,
+		b.building_name AS buildingName,
+		IF(d.door_type=1,1,0) AS defaultAuthorizedFlag
+		FROM sp_station s
+		INNER JOIN sp_user_station us ON us.station_id = s.id
+		INNER JOIN sp_group_station gs ON gs.station_id = s.id
+		INNER JOIN sp_group_door gd ON gd.group_id = gs.group_id
+		INNER JOIN sp_door d ON d.id = gd.door_id
+		INNER JOIN base_floor f ON f.id = d.floor_id
+		INNER JOIN base_building b ON b.id = f.building_id
+		INNER JOIN base_staff staff ON staff.EMPLOYNUM = us.work_no
+		INNER JOIN tb_user u ON u.mobile = staff.MOBILE
+		WHERE u.open_id = #{openId}
+		GROUP BY d.id
+		ORDER BY f.id,d.id
+	</select>
+
+	<select id="queryDoorControllersByOpenId" resultType="com.chris.smartpark.busi.dto.DoorControllerDTO" >
+		SELECT
+			d.id AS doorId,
+			d.door_name AS doorName,
+			d.door_type AS doorType,
+			r.read_no AS readerNo,
+			dc.id AS doorControllerId,
+			d.ext1 AS mappingDoorId
+		FROM sp_station s
+		INNER JOIN sp_user_station us ON us.station_id = s.id
+		INNER JOIN sp_group_station gs ON gs.station_id = s.id
+		INNER JOIN sp_group_door gd ON gd.group_id = gs.group_id
+		INNER JOIN sp_door d ON d.id = gd.door_id
+		INNER JOIN sp_door_readno r ON d.door_readno_id = r.id
+		INNER JOIN sp_door_controller dc ON dc.id = r.controller_id
+		INNER JOIN base_staff staff ON staff.EMPLOYNUM = us.work_no
+		INNER JOIN tb_user u ON u.mobile = staff.MOBILE
+		WHERE 1=1
+		<if test="openId != null and openId != '' ">
+			AND u.open_id = #{openId}
+		</if>
+		GROUP BY d.id
+		ORDER BY d.id
+	</select>
+
+	<select id="searchDoorCtrlList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		SELECT
+			d.id AS doorId,
+			d.door_name AS doorName,
+			d.floor_id AS floorId,
+			f.floor_name AS floorName,
+			d.ext1 AS tpDoorId,
+			b.building_name AS buildingName,
+			o.FULLNAME AS companyName,
+			o1.FULLNAME AS deptName,
+			r.read_no AS readNo,
+			dc.id AS doorCtrlId,
+			dc.controller_name AS doorCtrlName
+		FROM sp_door d
+		INNER JOIN base_organization o ON o.id = d.company_id
+		INNER JOIN base_organization o1 ON o1.id = d.dept_id
+		INNER JOIN base_floor f ON f.id = d.floor_id
+		INNER JOIN base_building b ON b.id = f.building_id
+		INNER JOIN sp_door_readno r ON d.door_readno_id = r.id
+		INNER JOIN sp_door_controller dc ON dc.id = r.controller_id
+		WHERE 1=1
+		<if test="keyword != null and keyword != '' ">
+			AND (d.door_name = #{keyword} or f.floor_name = #{keyword}
+			or INSTR(o.FULLNAME,#{keyword}) > 0 or INSTR(o1.FULLNAME,#{keyword}) > 0 or dc.controller_name = #{keyword})
+		</if>
+	</select>
+
+</mapper>

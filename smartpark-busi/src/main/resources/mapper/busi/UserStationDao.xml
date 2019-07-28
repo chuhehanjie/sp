@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.UserStationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.UserStationEntity" id="userStationMap">
+        <result property="id" column="id"/>
+        <result property="workNo" column="work_no"/>
+        <result property="stationId" column="station_id"/>
+        <result property="status" column="status"/>
+        <result property="ip" column="ip"/>
+        <result property="port" column="port"/>
+        <result property="remark" column="remark"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createworkNo" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateworkNo" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.UserStationEntity">
+		select * from sp_user_station where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.UserStationEntity">
+		select * from sp_user_station where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="workNo != null and workNo !='' ">
+				AND work_no = #{workNo}
+			</if>
+				<if test="stationId != null and stationId !='' ">
+				AND station_id = #{stationId}
+			</if>
+				<if test="status != null and status !='' ">
+				AND status = #{status}
+			</if>
+				<if test="ip != null and ip !='' ">
+				AND ip = #{ip}
+			</if>
+				<if test="port != null and port !='' ">
+				AND port = #{port}
+			</if>
+				<if test="remark != null and remark !='' ">
+				AND remark = #{remark}
+			</if>
+				<if test="ext1 != null and ext1 !='' ">
+				AND ext1 = #{ext1}
+			</if>
+				<if test="ext2 != null and ext2 !='' ">
+				AND ext2 = #{ext2}
+			</if>
+				<if test="ext3 != null and ext3 !='' ">
+				AND ext3 = #{ext3}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_user_station where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="workNo != null and workNo !='' ">
+                AND work_no = #{workNo}
+            </if>
+				<if test="stationId != null and stationId !='' ">
+                AND station_id = #{stationId}
+            </if>
+				<if test="status != null and status !='' ">
+                AND status = #{status}
+            </if>
+				<if test="ip != null and ip !='' ">
+                AND ip = #{ip}
+            </if>
+				<if test="port != null and port !='' ">
+                AND port = #{port}
+            </if>
+				<if test="remark != null and remark !='' ">
+                AND remark = #{remark}
+            </if>
+				<if test="ext1 != null and ext1 !='' ">
+                AND ext1 = #{ext1}
+            </if>
+				<if test="ext2 != null and ext2 !='' ">
+                AND ext2 = #{ext2}
+            </if>
+				<if test="ext3 != null and ext3 !='' ">
+                AND ext3 = #{ext3}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.UserStationEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_user_station
+		(
+			`work_no`,
+			`station_id`, 
+			`status`, 
+			`ip`, 
+			`port`, 
+			`remark`, 
+			`ext1`, 
+			`ext2`, 
+			`ext3`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{workNo}, 
+			#{stationId}, 
+			#{status}, 
+			#{ip}, 
+			#{port}, 
+			#{remark}, 
+			#{ext1}, 
+			#{ext2}, 
+			#{ext3}, 
+			#{createTime}, 
+			#{createworkNo}, 
+			#{updateTime}, 
+			#{updateworkNo}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.UserStationEntity">
+		update sp_user_station 
+		<set>
+			<if test="workNo != null">`work_no` = #{workNo}, </if>
+			<if test="stationId != null">`station_id` = #{stationId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="ip != null">`ip` = #{ip}, </if>
+			<if test="port != null">`port` = #{port}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createworkNo != null">`create_user_id` = #{createworkNo}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateworkNo != null">`update_user_id` = #{updateworkNo}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_user_station where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_user_station where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

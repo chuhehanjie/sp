@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.busi.dao.AccessRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.busi.entity.AccessRecordEntity" id="accessRecordMap">
+        <result property="id" column="id"/>
+        <result property="carNo" column="car_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="ownerType" column="owner_type"/>
+        <result property="mobile" column="mobile"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="identityType" column="identity_type"/>
+        <result property="identityValue" column="identity_value"/>
+        <result property="captureImg" column="capture_img"/>
+        <result property="accessTime" column="access_time"/>
+        <result property="accessType" column="access_type"/>
+        <result property="channelId" column="channel_id"/>
+        <result property="channelName" column="channel_name"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="ext3" column="ext3"/>
+        <result property="createTime" column="create_time"/>
+        <result property="carNumber" column="car_number"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.busi.entity.AccessRecordEntity">
+		select * from sp_access_record where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.busi.entity.AccessRecordEntity">
+		select * from sp_access_record where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="carNo != null and carNo !='' ">
+				AND car_no = #{carNo}
+			</if>
+				<if test="userId != null and userId !='' ">
+				AND user_id = #{userId}
+			</if>
+				<if test="userName != null and userName !='' ">
+				AND user_name = #{userName}
+			</if>
+				<if test="ownerType != null and ownerType !='' ">
+				AND owner_type = #{ownerType}
+			</if>
+				<if test="mobile != null and mobile !='' ">
+				AND mobile = #{mobile}
+			</if>
+				<if test="deptName != null and deptName !='' ">
+				AND dept_name = #{deptName}
+			</if>
+				<if test="identityType != null and identityType !='' ">
+				AND identity_type = #{identityType}
+			</if>
+				<if test="identityValue != null and identityValue !='' ">
+				AND identity_value = #{identityValue}
+			</if>
+				<if test="captureImg != null and captureImg !='' ">
+				AND capture_img = #{captureImg}
+			</if>
+			<if test="enterTime != null and enterTime !='' ">
+				AND ((access_time &gt;= #{enterTime} AND access_type = 1)
+				<if test="outTime == null and outTime =='' ">
+					)
+				</if>
+			</if>
+			<if test="outTime != null and outTime !='' ">
+				<choose>
+					<when test="enterTime != null and enterTime !=''">
+						OR (access_time &gt;= #{outTime} AND access_type = 0))
+					</when>
+					<otherwise>
+						AND (access_time &gt;= #{outTime} AND access_type = 0)
+					</otherwise>
+				</choose>
+			</if>
+		    <if test="accessType != null and accessType !='' ">
+				AND access_type = #{accessType}
+			</if>
+				<if test="channelId != null and channelId !='' ">
+				AND channel_id = #{channelId}
+			</if>
+				<if test="channelName != null and channelName !='' ">
+				AND channel_name = #{channelName}
+			</if>
+			<if test="carNumber != null and carNumber !='' ">
+				AND car_number = #{carNumber}
+			</if>
+			<if test="ext1 != null and ext1 !='' ">
+				AND INSTR(ext1, #{ext1}) &gt; 0
+			</if>
+				<if test="ext2 != null and ext2 !='' ">
+				AND ext2 = #{ext2}
+			</if>
+				<if test="ext3 != null and ext3 !='' ">
+				AND ext3 = #{ext3}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sp_access_record where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="carNo != null and carNo !='' ">
+                AND car_no = #{carNo}
+            </if>
+				<if test="userId != null and userId !='' ">
+                AND user_id = #{userId}
+            </if>
+				<if test="userName != null and userName !='' ">
+                AND user_name = #{userName}
+            </if>
+				<if test="ownerType != null and ownerType !='' ">
+                AND owner_type = #{ownerType}
+            </if>
+				<if test="mobile != null and mobile !='' ">
+                AND mobile = #{mobile}
+            </if>
+				<if test="deptName != null and deptName !='' ">
+                AND dept_name = #{deptName}
+            </if>
+				<if test="identityType != null and identityType !='' ">
+                AND identity_type = #{identityType}
+            </if>
+				<if test="identityValue != null and identityValue !='' ">
+                AND identity_value = #{identityValue}
+            </if>
+				<if test="captureImg != null and captureImg !='' ">
+                AND capture_img = #{captureImg}
+            </if>
+			<if test="enterTime != null and enterTime !='' ">
+				AND ((access_time &gt;= #{enterTime} AND access_type = 1)
+				<if test="outTime == null and outTime =='' ">
+					)
+				</if>
+			</if>
+			<if test="outTime != null and outTime !='' ">
+				<choose>
+					<when test="enterTime != null and enterTime !=''">
+						OR (access_time &gt;= #{outTime} AND access_type = 0))
+					</when>
+					<otherwise>
+						AND (access_time &gt;= #{outTime} AND access_type = 0)
+					</otherwise>
+				</choose>
+			</if>
+				<if test="accessType != null and accessType !='' ">
+                AND access_type = #{accessType}
+            </if>
+				<if test="channelId != null and channelId !='' ">
+                AND channel_id = #{channelId}
+            </if>
+				<if test="channelName != null and channelName !='' ">
+                AND channel_name = #{channelName}
+            </if>
+			<if test="carNumber != null and carNumber !='' ">
+				AND car_number = #{carNumber}
+			</if>
+			<if test="ext1 != null and ext1 !='' ">
+				AND INSTR(ext1, #{ext1}) &gt; 0
+			</if>
+				<if test="ext2 != null and ext2 !='' ">
+                AND ext2 = #{ext2}
+            </if>
+				<if test="ext3 != null and ext3 !='' ">
+                AND ext3 = #{ext3}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.busi.entity.AccessRecordEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sp_access_record
+		(
+			`car_no`, 
+			`user_id`, 
+			`user_name`, 
+			`owner_type`, 
+			`mobile`, 
+			`dept_name`, 
+			`identity_type`, 
+			`identity_value`, 
+			`capture_img`, 
+			`access_time`, 
+			`access_type`, 
+			`channel_id`, 
+			`channel_name`, 
+			`car_number`,
+			`ext1`,
+			`ext2`, 
+			`ext3`, 
+			`create_time`
+		)
+		values
+		(
+			#{carNo}, 
+			#{userId}, 
+			#{userName}, 
+			#{ownerType}, 
+			#{mobile}, 
+			#{deptName}, 
+			#{identityType}, 
+			#{identityValue}, 
+			#{captureImg}, 
+			#{accessTime}, 
+			#{accessType}, 
+			#{channelId}, 
+			#{channelName}, 
+			#{carNumber},
+			#{ext1},
+			#{ext2}, 
+			#{ext3}, 
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.busi.entity.AccessRecordEntity">
+		update sp_access_record 
+		<set>
+			<if test="carNo != null">`car_no` = #{carNo}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="ownerType != null">`owner_type` = #{ownerType}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="deptName != null">`dept_name` = #{deptName}, </if>
+			<if test="identityType != null">`identity_type` = #{identityType}, </if>
+			<if test="identityValue != null">`identity_value` = #{identityValue}, </if>
+			<if test="captureImg != null">`capture_img` = #{captureImg}, </if>
+			<if test="accessTime != null">`access_time` = #{accessTime}, </if>
+			<if test="accessType != null">`access_type` = #{accessType}, </if>
+			<if test="channelId != null">`channel_id` = #{channelId}, </if>
+			<if test="channelName != null">`channel_name` = #{channelName}, </if>
+			<if test="carNumber != null">`car_number` = #{carNumber}, </if>
+			<if test="ext1 != null">`ext1` = #{ext1}, </if>
+			<if test="ext2 != null">`ext2` = #{ext2}, </if>
+			<if test="ext3 != null">`ext3` = #{ext3}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from sp_access_record where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sp_access_record where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

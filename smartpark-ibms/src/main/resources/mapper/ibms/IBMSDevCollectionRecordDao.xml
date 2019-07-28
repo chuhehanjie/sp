@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.ibms.dao.IBMSDevCollectionRecordDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.ibms.entity.IBMSDevCollectionRecordEntity" id="ibmsDevCollectionRecordMap">
+        <result property="id" column="id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="subsystemId" column="subsystem_id"/>
+        <result property="attrId" column="attr_id"/>
+        <result property="value" column="value"/>
+        <result property="collectionDate" column="collection_date"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.chris.smartpark.ibms.entity.IBMSDevCollectionRecordEntity">
+        select * from ibms_dev_collection_record where id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.chris.smartpark.ibms.entity.IBMSDevCollectionRecordEntity">
+        select * from ibms_dev_collection_record where 1=1
+        <if test="id != null and id !='' ">
+            AND id = #{id}
+        </if>
+        <if test="deviceId != null and deviceId !='' ">
+            AND device_id = #{deviceId}
+        </if>
+        <if test="subsystemId != null and subsystemId !='' ">
+            AND subsystem_id = #{subsystemId}
+        </if>
+        <if test="attrId != null and attrId !='' ">
+            AND attr_id = #{attrId}
+        </if>
+        <if test="value != null and value !='' ">
+            AND value = #{value}
+        </if>
+        <if test="collectionDate != null and collectionDate !='' ">
+            AND collection_date = #{collectionDate}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from ibms_dev_collection_record where 1=1
+        <if test="id != null and id !='' ">
+            AND id = #{id}
+        </if>
+        <if test="deviceId != null and deviceId !='' ">
+            AND device_id = #{deviceId}
+        </if>
+        <if test="subsystemId != null and subsystemId !='' ">
+            AND subsystem_id = #{subsystemId}
+        </if>
+        <if test="attrId != null and attrId !='' ">
+            AND attr_id = #{attrId}
+        </if>
+        <if test="value != null and value !='' ">
+            AND value = #{value}
+        </if>
+        <if test="collectionDate != null and collectionDate !='' ">
+            AND collection_date = #{collectionDate}
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.chris.smartpark.ibms.entity.IBMSDevCollectionRecordEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ibms_dev_collection_record
+        (
+        `device_id`,
+        `subsystem_id`,
+        `attr_id`,
+        `value`,
+        `collection_date`,
+        `create_time`
+        )
+        values
+        (
+        #{deviceId},
+        #{subsystemId},
+        #{attrId},
+        #{value},
+        #{collectionDate},
+        #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.chris.smartpark.ibms.entity.IBMSDevCollectionRecordEntity">
+        update ibms_dev_collection_record
+        <set>
+            <if test="deviceId != null">`device_id` = #{deviceId},</if>
+            <if test="subsystemId != null">`subsystem_id` = #{subsystemId},</if>
+            <if test="attrId != null">`attr_id` = #{attrId},</if>
+            <if test="value != null">`value` = #{value},</if>
+            <if test="collectionDate != null">`collection_date` = #{collectionDate},</if>
+            <if test="createTime != null">`create_time` = #{createTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from ibms_dev_collection_record where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from ibms_dev_collection_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryElectricity" resultType="com.chris.smartpark.ibms.entity.ElectricityEntity">
+        SELECT DATE_FORMAT(collection_date, '%Y-%m-%d') AS `date` ,SUM(`value`) AS  electricity  FROM ibms_dev_collection_record
+        WHERE attr_id = #{electric,jdbcType=INTEGER}
+        <if test="startDate != null and startDate != ''">
+            AND DATE_FORMAT(collection_date, '%Y-%m-%d') &gt;= #{startDate,jdbcType=VARCHAR}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DATE_FORMAT(collection_date, '%Y-%m-%d') &lt;= #{endDate,jdbcType=VARCHAR}
+        </if>
+        GROUP BY DATE_FORMAT(collection_date, '%Y-%m-%d')
+    </select>
+
+    <select id="countElectricity" resultType="java.lang.Double">
+        SELECT IFNULL(SUM(`value`),0) FROM ibms_dev_collection_record
+        WHERE attr_id = #{electric,jdbcType=INTEGER}
+        <if test="type != null and type == 1">
+            AND DATE_FORMAT(collection_date,'%Y-%m-%d') = #{date,jdbcType=VARCHAR}
+        </if>
+        <if test="type != null and type == 2">
+            AND DATE_FORMAT(collection_date,'%Y-%m') = #{date,jdbcType=VARCHAR}
+        </if>
+        <if test="type != null and type == 3">
+            AND DATE_FORMAT(collection_date,'%Y') = #{date,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="queryEnvInfo" resultType="com.chris.smartpark.ibms.entity.EnvInfoEntity">
+        SELECT a.id,a.floor_name AS floorName,temperature,humidity,ppm
+        FROM
+        (SELECT t1.id,floor_name,t3.VALUE AS temperature FROM base_floor t1 LEFT JOIN
+        base_device_info t2 ON t1.location_id = t2.location_id
+        LEFT JOIN ibms_dev_collection_record t3 ON t2.id = t3.device_id WHERE t2.device_type_id = 1 AND t3.attr_id = #{temperature,jdbcType=INTEGER} )a
+        LEFT JOIN (
+        SELECT t1.id,floor_name,t3.value as humidity FROM base_floor t1 LEFT JOIN
+        base_device_info t2 ON t1.location_id = t2.location_id
+        LEFT JOIN ibms_dev_collection_record t3 ON t2.id = t3.device_id WHERE t2.device_type_id = 1 AND t3.attr_id = #{humidity,jdbcType=INTEGER}) b
+        ON a.id = b.id
+        LEFT JOIN (
+        SELECT t1.id,floor_name,t3.value AS ppm FROM base_floor t1 LEFT JOIN
+        base_device_info t2 ON t1.location_id = t2.location_id
+        LEFT JOIN ibms_dev_collection_record t3 ON t2.id = t3.device_id WHERE t2.device_type_id = 1 AND t3.attr_id = #{ppm,jdbcType=INTEGER}) c
+        ON a.id = c.id
+    </select>
+
+    <select id="queryWaterTemperature" resultType="com.chris.smartpark.ibms.entity.WaterTemperaturePeriodEntity">
+        SELECT
+        DATE_FORMAT(collection_date,'%H:%m') AS `time`,`value` AS waterTemperature
+        FROM ibms_dev_collection_record WHERE
+        attr_id = #{attrId}
+        AND DATE_FORMAT(collection_date,'%Y-%m-%d') = CURDATE()
+    </select>
+
+</mapper>

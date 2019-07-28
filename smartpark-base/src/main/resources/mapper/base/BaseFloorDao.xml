@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseFloorDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseFloorEntity" id="baseFloorMap">
+        <result property="id" column="id"/>
+        <result property="floorName" column="floor_name"/>
+        <result property="rooms" column="rooms"/>
+        <result property="companyId" column="company_id"/>
+        <result property="buildingId" column="building_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseFloorEntity">
+		select * from base_floor where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseFloorEntity">
+		select * from base_floor where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="floorName != null and floorName !='' ">
+				AND floor_name = #{floorName}
+			</if>
+				<if test="rooms != null and rooms !='' ">
+				AND rooms = #{rooms}
+			</if>
+				<if test="companyId != null and companyId !='' ">
+				AND company_id = #{companyId}
+			</if>
+				<if test="buildingId != null and buildingId !='' ">
+				AND building_id = #{buildingId}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_floor where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="floorName != null and floorName !='' ">
+                AND floor_name = #{floorName}
+            </if>
+				<if test="rooms != null and rooms !='' ">
+                AND rooms = #{rooms}
+            </if>
+				<if test="companyId != null and companyId !='' ">
+                AND company_id = #{companyId}
+            </if>
+				<if test="buildingId != null and buildingId !='' ">
+                AND building_id = #{buildingId}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseFloorEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_floor
+		(
+			`floor_name`, 
+			`rooms`, 
+			`company_id`, 
+			`building_id`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{floorName}, 
+			#{rooms}, 
+			#{companyId}, 
+			#{buildingId}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseFloorEntity">
+		update base_floor 
+		<set>
+			<if test="floorName != null">`floor_name` = #{floorName}, </if>
+			<if test="rooms != null">`rooms` = #{rooms}, </if>
+			<if test="companyId != null">`company_id` = #{companyId}, </if>
+			<if test="buildingId != null">`building_id` = #{buildingId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_floor where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_floor where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

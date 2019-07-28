@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chris.smartpark.base.dao.BaseParkDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.chris.smartpark.base.entity.BaseParkEntity" id="baseParkMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="area" column="area"/>
+        <result property="detailAddress" column="detail_address"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="buildingTime" column="building_time"/>
+        <result property="buildingArea" column="building_area"/>
+        <result property="remark" column="remark"/>
+        <result property="parkPicUrl" column="park_pic_url"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.chris.smartpark.base.entity.BaseParkEntity">
+		select * from base_park where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.chris.smartpark.base.entity.BaseParkEntity">
+		select * from base_park where 1=1
+			<if test="id != null and id !='' ">
+				AND id = #{id}
+			</if>
+				<if test="name != null and name !='' ">
+				AND name = #{name}
+			</if>
+				<if test="province != null and province !='' ">
+				AND province = #{province}
+			</if>
+				<if test="city != null and city !='' ">
+				AND city = #{city}
+			</if>
+				<if test="area != null and area !='' ">
+				AND area = #{area}
+			</if>
+				<if test="detailAddress != null and detailAddress !='' ">
+				AND detail_address = #{detailAddress}
+			</if>
+				<if test="longitude != null and longitude !='' ">
+				AND longitude = #{longitude}
+			</if>
+				<if test="latitude != null and latitude !='' ">
+				AND latitude = #{latitude}
+			</if>
+				<if test="buildingTime != null and buildingTime !='' ">
+				AND building_time = #{buildingTime}
+			</if>
+				<if test="buildingArea != null and buildingArea !='' ">
+				AND building_area = #{buildingArea}
+			</if>
+				<if test="remark != null and remark !='' ">
+				AND remark = #{remark}
+			</if>
+				<if test="parkPicUrl != null and parkPicUrl !='' ">
+				AND park_pic_url = #{parkPicUrl}
+			</if>
+				<if test="status != null and status !='' ">
+				AND status = #{status}
+			</if>
+		        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from base_park where 1=1
+			<if test="id != null and id !='' ">
+                AND id = #{id}
+            </if>
+				<if test="name != null and name !='' ">
+                AND name = #{name}
+            </if>
+				<if test="province != null and province !='' ">
+                AND province = #{province}
+            </if>
+				<if test="city != null and city !='' ">
+                AND city = #{city}
+            </if>
+				<if test="area != null and area !='' ">
+                AND area = #{area}
+            </if>
+				<if test="detailAddress != null and detailAddress !='' ">
+                AND detail_address = #{detailAddress}
+            </if>
+				<if test="longitude != null and longitude !='' ">
+                AND longitude = #{longitude}
+            </if>
+				<if test="latitude != null and latitude !='' ">
+                AND latitude = #{latitude}
+            </if>
+				<if test="buildingTime != null and buildingTime !='' ">
+                AND building_time = #{buildingTime}
+            </if>
+				<if test="buildingArea != null and buildingArea !='' ">
+                AND building_area = #{buildingArea}
+            </if>
+				<if test="remark != null and remark !='' ">
+                AND remark = #{remark}
+            </if>
+				<if test="parkPicUrl != null and parkPicUrl !='' ">
+                AND park_pic_url = #{parkPicUrl}
+            </if>
+				<if test="status != null and status !='' ">
+                AND status = #{status}
+            </if>
+			</select>
+	 
+	<insert id="save" parameterType="com.chris.smartpark.base.entity.BaseParkEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into base_park
+		(
+			`name`, 
+			`province`, 
+			`city`, 
+			`area`, 
+			`detail_address`, 
+			`longitude`, 
+			`latitude`, 
+			`building_time`, 
+			`building_area`, 
+			`remark`, 
+			`park_pic_url`, 
+			`status`, 
+			`create_time`, 
+			`create_user_id`, 
+			`update_time`, 
+			`update_user_id`
+		)
+		values
+		(
+			#{name}, 
+			#{province}, 
+			#{city}, 
+			#{area}, 
+			#{detailAddress}, 
+			#{longitude}, 
+			#{latitude}, 
+			#{buildingTime}, 
+			#{buildingArea}, 
+			#{remark}, 
+			#{parkPicUrl}, 
+			#{status}, 
+			#{createTime}, 
+			#{createUserId}, 
+			#{updateTime}, 
+			#{updateUserId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.chris.smartpark.base.entity.BaseParkEntity">
+		update base_park 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="province != null">`province` = #{province}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="area != null">`area` = #{area}, </if>
+			<if test="detailAddress != null">`detail_address` = #{detailAddress}, </if>
+			<if test="longitude != null">`longitude` = #{longitude}, </if>
+			<if test="latitude != null">`latitude` = #{latitude}, </if>
+			<if test="buildingTime != null">`building_time` = #{buildingTime}, </if>
+			<if test="buildingArea != null">`building_area` = #{buildingArea}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="parkPicUrl != null">`park_pic_url` = #{parkPicUrl}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from base_park where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from base_park where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

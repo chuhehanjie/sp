@@ -1,22 +1,23 @@
 package com.chris.smartpark.busi.common;
 
 import com.alibaba.fastjson.JSONObject;
-import com.chris.base.common.utils.CacheDataUtils;
-import com.chris.base.common.utils.DateUtils;
-import com.chris.base.common.utils.RedisUtils;
-import com.chris.base.common.utils.ValidateUtils;
+import com.chris.base.common.utils.*;
 import com.chris.base.common.wx.dto.WXMsgTempSendDTO;
 import com.chris.base.common.wx.service.WXService;
 import com.chris.base.modules.app.service.UserService;
 import com.chris.smartpark.base.entity.BaseStaffEntity;
 import com.chris.smartpark.base.service.BaseStaffService;
 import com.chris.smartpark.busi.dto.ReservationOrderApproveDTO;
+import com.chris.smartpark.busi.dto.WXFormIdMarker;
 import com.chris.smartpark.busi.entity.VisitorInfoEntity;
 import com.chris.smartpark.busi.entity.VisitorReservationEntity;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Slf4j
@@ -32,13 +33,10 @@ public class WXNoticeMsgUtils {
     private CacheDataUtils cacheDataUtils;
 
     @Autowired
-    private RedisUtils redisUtils;
-
-    @Autowired
     private BaseStaffService staffService;
 
-    private static final long WX_FORM_ID_EXPIRE = 604800L;
-    private static final String WX_FORM_ID_PREFIX = "WX_FORM_ID_";
+    public static final long WX_FORM_ID_EXPIRE = 604800L;
+    public static final String WX_FORM_ID_PREFIX = "WX_FORM_ID_";
     private static final String WX_TEMP_ID_ORDER_CREATED = "SIuQgDBJxvxZTlTJMhjP-hoJ_fHUcIdoP43WyroBFR4";
     private static final String WX_TEMP_ID_ORDER_ACCEPT = "ACIneEtrq_Qd1plikRjksShw0LXUa6go7xE56M5rul4";
     private static final String WX_TEMP_ID_ORDER_APPROVE_RESULT = "tyO1NzleQYuI6uwPR0b72xN3RpBRVtKCHQ8FP4tIoTY";
@@ -60,15 +58,46 @@ public class WXNoticeMsgUtils {
         //来访事由
         msg.put("keyword4", ImmutableMap.of("value", reservationOrder.getRemark()));
         reservationOrder.setExt3(this.getStaffOpenIdByMobile(reservationOrder.getStaffMobile()));
-        String staffFormId = this.redisUtils.get(WX_FORM_ID_PREFIX + reservationOrder.getExt3(), String.class);
+        String staffFormId = this.getFormIdFromRedis(reservationOrder.getExt3());
         if (ValidateUtils.isEmptyString(staffFormId)) {
-            staffFormId = formId;
-            log.error("缓存中不存在员工的formId，则取传过来的formId");
+            log.error("未获取到员工可用的formid，无法发送预约单受理消息给员工");
+            return;
         }
         this.wxService.sendWXMsgTemp(WXMsgTempSendDTO.builder().form_id(staffFormId).template_id(WX_TEMP_ID_ORDER_ACCEPT).
                         touser(reservationOrder.getExt3()).page("/staff/pages/visit/info?id=" + reservationOrder.getId()).data(msg).build(),
                 this.cacheDataUtils.getConfigValueByKey("WX_APP_ID"), this.cacheDataUtils.getConfigValueByKey("WX_APP_SECRET"));
         log.info("发送预约单受理通知消息给员工！");
+    }
+
+    public static String getFormIdFromRedis(String openId) {
+        RedisUtils redisUtils = (RedisUtils) SpringContextUtils.getBean("redisUtils");
+        String key = WX_FORM_ID_PREFIX + openId;
+        List<WXFormIdMarker> list = redisUtils.get(key, List.class);
+        String formId = null;
+        if (ValidateUtils.isEmptyCollection(list)) {
+            log.error("缓存中不存在对应的formId");
+        } else {
+            for (WXFormIdMarker formIdMarker : list) {
+                if (!formIdMarker.isUsed()) {
+                    formId = formIdMarker.getFormId();
+                    formIdMarker.setUsed(true);
+                    redisUtils.set(key, list, WX_FORM_ID_EXPIRE);
+                    break;
+                }
+            }
+        }
+        return formId;
+    }
+
+    public static void saveFormId(String openId, String formId) {
+        RedisUtils redisUtils = (RedisUtils) SpringContextUtils.getBean("redisUtils");
+        String key = WX_FORM_ID_PREFIX + openId;
+        List<WXFormIdMarker> list = redisUtils.get(key, List.class);
+        if (ValidateUtils.isEmptyCollection(list)) {
+            list = Lists.newArrayList();
+        }
+        list.add(new WXFormIdMarker(formId, false));
+        redisUtils.set(key, list, WX_FORM_ID_EXPIRE);
     }
 
     /**
@@ -90,8 +119,6 @@ public class WXNoticeMsgUtils {
         this.wxService.sendWXMsgTemp(WXMsgTempSendDTO.builder().form_id(formId).template_id(WX_TEMP_ID_ORDER_CREATED).
                         touser(reservationOrder.getOpenId()).page("/pages/visitor/info?id=" + reservationOrder.getId()).data(msg).build(),
                 this.cacheDataUtils.getConfigValueByKey("WX_APP_ID"), this.cacheDataUtils.getConfigValueByKey("WX_APP_SECRET"));
-        // 缓存访客 openid 和 formId
-        this.redisUtils.set(WX_FORM_ID_PREFIX + reservationOrder.getOpenId(), formId, WX_FORM_ID_EXPIRE);
         log.info("发送预约单创建成功消息给访客！");
     }
 
@@ -105,16 +132,14 @@ public class WXNoticeMsgUtils {
         JSONObject msg = new JSONObject();
         msg.put("keyword1", ImmutableMap.of("value", ValidateUtils.equals(VisitorConstants.ApproveResult.OK, authorizeDTO.getApproveReslut()) ? "审核通过" : "审核不通过"));
         msg.put("keyword2", ImmutableMap.of("value", reservationOrder.getReservationNo()));
-        String formId = this.redisUtils.get(WX_FORM_ID_PREFIX + reservationOrder.getOpenId(), String.class);
+        String formId = this.getFormIdFromRedis(reservationOrder.getOpenId());
         if (ValidateUtils.isEmptyString(formId)) {
-            formId = authorizeDTO.getFormId();
-            log.error("缓存中不存在访客的formId，则取传过来的formId");
+            log.error("未获取到访客可用的formid，无法发送审核结果给访客");
+            return;
         }
         this.wxService.sendWXMsgTemp(WXMsgTempSendDTO.builder().form_id(formId).template_id(WX_TEMP_ID_ORDER_APPROVE_RESULT).
                         touser(reservationOrder.getOpenId()).page("/pages/visitor/info?id=" + reservationOrder.getId()).data(msg).build(),
                 this.cacheDataUtils.getConfigValueByKey("WX_APP_ID"), this.cacheDataUtils.getConfigValueByKey("WX_APP_SECRET"));
-        // 缓存员工 openid 和 formId
-        this.redisUtils.set(WX_FORM_ID_PREFIX + authorizeDTO.getOpenId(), formId, WX_FORM_ID_EXPIRE);
         log.info("发送预约单审核结果消息给访客！");
     }
 

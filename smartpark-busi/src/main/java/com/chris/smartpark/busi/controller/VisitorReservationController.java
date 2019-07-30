@@ -5,15 +5,18 @@ import com.chris.base.common.annotation.SysLog;
 import com.chris.base.common.exception.CommonException;
 import com.chris.base.common.utils.CommonResponse;
 import com.chris.base.common.utils.PageUtils;
+import com.chris.base.common.utils.RedisUtils;
 import com.chris.base.common.utils.ValidateUtils;
 import com.chris.base.modules.app.annotation.Login;
 import com.chris.smartpark.busi.common.VisitorConstants;
+import com.chris.smartpark.busi.common.WXNoticeMsgUtils;
 import com.chris.smartpark.busi.dto.AuthIdCardDTO;
 import com.chris.smartpark.busi.dto.ReservationOrderApproveDTO;
 import com.chris.smartpark.busi.dto.ReservationOrderDTO;
 import com.chris.smartpark.busi.entity.VisitorIdcardEntity;
 import com.chris.smartpark.busi.entity.VisitorReservationEntity;
 import com.chris.smartpark.busi.service.VisitorReservationService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 
@@ -39,6 +43,9 @@ import java.util.Map;
 public class VisitorReservationController {
 	@Autowired
 	private VisitorReservationService visitorReservationService;
+
+	@Autowired
+	private RedisUtils redisUtils;
 
 	/**
 	 * 根据条件分页查询员工或管理员对应的预约单
@@ -196,6 +203,14 @@ public class VisitorReservationController {
 			throw new CommonException("预约单ID不能为空！");
 		}
 		this.visitorReservationService.uploadVisitorPhoto(file, reservationOrderId);
+		return CommonResponse.ok();
+	}
+
+	@RequestMapping("/saveFormId")
+	public CommonResponse saveFormId(@RequestBody Map<String, Object> params) {
+		String openId = params.get(VisitorConstants.Keys.OPEN_ID).toString();
+		String formId = params.get(VisitorConstants.Keys.FORM_ID).toString();
+		WXNoticeMsgUtils.saveFormId(openId, formId);
 		return CommonResponse.ok();
 	}
 }

@@ -58,7 +58,7 @@ public class WXNoticeMsgUtils {
         //来访事由
         msg.put("keyword4", ImmutableMap.of("value", reservationOrder.getRemark()));
         reservationOrder.setExt3(this.getStaffOpenIdByMobile(reservationOrder.getStaffMobile()));
-        String staffFormId = this.getFormIdFromRedis(reservationOrder.getExt3());
+        String staffFormId = getFormIdFromRedis(reservationOrder.getExt3());
         if (ValidateUtils.isEmptyString(staffFormId)) {
             log.error("未获取到员工可用的formid，无法发送预约单受理消息给员工");
             return;
@@ -95,6 +95,10 @@ public class WXNoticeMsgUtils {
         List<WXFormIdMarker> list = redisUtils.get(key, List.class);
         if (ValidateUtils.isEmptyCollection(list)) {
             list = Lists.newArrayList();
+        }
+        if (ValidateUtils.equals("the formId is a mock one", formId)) {
+            log.error("formid 值是模拟的");
+            return;
         }
         list.add(new WXFormIdMarker(formId, false));
         redisUtils.set(key, list, WX_FORM_ID_EXPIRE);

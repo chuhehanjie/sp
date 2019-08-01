@@ -210,6 +210,7 @@ public class VisitorReservationController {
 	public CommonResponse saveFormId(@RequestBody Map<String, Object> params) {
 		String openId = params.get(VisitorConstants.Keys.OPEN_ID).toString();
 		String formId = params.get(VisitorConstants.Keys.FORM_ID).toString();
+		log.info("openId = {}, formId = {}", openId, formId);
 		WXNoticeMsgUtils.saveFormId(openId, formId);
 		return CommonResponse.ok();
 	}

@@ -103,6 +103,7 @@ public class VisitorConstants {
     public interface Keys {
         String OPEN_ID = "openId";
         String FORM_ID = "formId";
+        String USED = "used";
         String PAGE = "page";
         String LIMIT = "limit";
         String IDCARD_NO = "idcardNo";

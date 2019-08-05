@@ -13,11 +13,13 @@ import com.chris.smartpark.busi.entity.VisitorInfoEntity;
 import com.chris.smartpark.busi.entity.VisitorReservationEntity;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -36,7 +38,7 @@ public class WXNoticeMsgUtils {
     private BaseStaffService staffService;
 
     public static final long WX_FORM_ID_EXPIRE = 604800L;
-    public static final String WX_FORM_ID_PREFIX = "WX_FORM_ID_";
+    public static final String WX_FORM_ID_PREFIX = "WX:FORMID:";
     private static final String WX_TEMP_ID_ORDER_CREATED = "SIuQgDBJxvxZTlTJMhjP-hoJ_fHUcIdoP43WyroBFR4";
     private static final String WX_TEMP_ID_ORDER_ACCEPT = "ACIneEtrq_Qd1plikRjksShw0LXUa6go7xE56M5rul4";
     private static final String WX_TEMP_ID_ORDER_APPROVE_RESULT = "tyO1NzleQYuI6uwPR0b72xN3RpBRVtKCHQ8FP4tIoTY";
@@ -72,12 +74,13 @@ public class WXNoticeMsgUtils {
     public static String getFormIdFromRedis(String openId) {
         RedisUtils redisUtils = (RedisUtils) SpringContextUtils.getBean("redisUtils");
         String key = WX_FORM_ID_PREFIX + openId;
-        List<WXFormIdMarker> list = redisUtils.get(key, List.class);
+        List<Map<String, Object>> list = redisUtils.get(key, List.class);
         String formId = null;
         if (ValidateUtils.isEmptyCollection(list)) {
             log.error("缓存中不存在对应的formId");
         } else {
-            for (WXFormIdMarker formIdMarker : list) {
+            for (Map<String, Object> item : list) {
+                WXFormIdMarker formIdMarker = convertMap2WXFormIdMarker(item);
                 if (!formIdMarker.isUsed()) {
                     formId = formIdMarker.getFormId();
                     formIdMarker.setUsed(true);
@@ -92,7 +95,7 @@ public class WXNoticeMsgUtils {
     public static void saveFormId(String openId, String formId) {
         RedisUtils redisUtils = (RedisUtils) SpringContextUtils.getBean("redisUtils");
         String key = WX_FORM_ID_PREFIX + openId;
-        List<WXFormIdMarker> list = redisUtils.get(key, List.class);
+        List<Map<String, Object>> list = redisUtils.get(key, List.class);
         if (ValidateUtils.isEmptyCollection(list)) {
             list = Lists.newArrayList();
         }
@@ -100,8 +103,19 @@ public class WXNoticeMsgUtils {
             log.error("formid 值是模拟的");
             return;
         }
-        list.add(new WXFormIdMarker(formId, false));
+        list.add(convertWXFormIdMarker2Map(new WXFormIdMarker(formId, false)));
         redisUtils.set(key, list, WX_FORM_ID_EXPIRE);
+    }
+
+    private static WXFormIdMarker convertMap2WXFormIdMarker(Map<String, Object> item) {
+        return new WXFormIdMarker(item.get(VisitorConstants.Keys.FORM_ID).toString(), (Boolean) item.get(VisitorConstants.Keys.USED));
+    }
+
+    private static Map<String,Object> convertWXFormIdMarker2Map(WXFormIdMarker wxFormIdMarker) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put(VisitorConstants.Keys.FORM_ID, wxFormIdMarker.getFormId());
+        resultMap.put(VisitorConstants.Keys.USED, wxFormIdMarker.isUsed());
+        return resultMap;
     }
 
     /**

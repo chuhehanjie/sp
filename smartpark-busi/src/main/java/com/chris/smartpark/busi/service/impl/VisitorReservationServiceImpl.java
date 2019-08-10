@@ -105,7 +105,7 @@ public class VisitorReservationServiceImpl implements VisitorReservationService 
         VisitorInfoHisEntity visitorHisInfo = this.visitorInfoHisService.queryByReservationId(reservationOrder.getId());
 //        VisitorInfoEntity visitorInfoEntity = this.visitorInfoService.queryObject(reservationOrder.getVisitorId());
         reservationOrderDTO.setName(visitorHisInfo.getName());
-        reservationOrderDTO.setIdcardNo(visitorHisInfo.getIdcardNo());
+        reservationOrderDTO.setIdcardNo(VisitorUtils.idcardNoFuzzy(visitorHisInfo.getIdcardNo()));
         //受访者
         BaseStaffEntity baseStaffEntity = this.baseStaffService.queryObject(reservationOrder.getStaffId());
         reservationOrderDTO.setStaffId(baseStaffEntity.getId());
@@ -135,6 +135,8 @@ public class VisitorReservationServiceImpl implements VisitorReservationService 
         List<ReservationOrderQryDTO> resultList = new ArrayList<>();
         if (total > 0) {
             resultList = this.sortData(this.visitorReservationDao.queryReservationOrdersByOpenId(query));
+            // 身份证号码中间4位用“*”显示
+            resultList.forEach(item -> item.setIdcardNo(VisitorUtils.idcardNoFuzzy(item.getIdcardNo())));
         }
         PageUtils pageUtil = new PageUtils(resultList, total, query.getLimit(), query.getPage());
         return pageUtil;
@@ -460,6 +462,7 @@ public class VisitorReservationServiceImpl implements VisitorReservationService 
 //        convertPhyCardId("20A2C42894518466");
         /*System.out.println("vvvv = " + VisitorUtils.hex2Int("845194"));
         System.out.println("value = " + VisitorUtils.hex2Int("87b5ac"));*/
+        System.out.println("430302198410030794".replaceAll("(\\d{4})(\\d+)(\\d{4})", "$1***$3"));
     }
 
 

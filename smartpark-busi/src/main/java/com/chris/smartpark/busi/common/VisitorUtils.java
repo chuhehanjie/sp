@@ -102,4 +102,13 @@ public final class VisitorUtils {
         return ValidateUtils.equals("cosonDoorCtrlProvider", cacheDataUtils.getConfigValueByKey(VisitorConstants.Keys.DOOR_CTRL_PROVIDER));*/
         return true;
     }
+
+    /**
+     * 身份证号码模糊化
+     * @param idcardNo
+     * @return
+     */
+    public static String idcardNoFuzzy(String idcardNo) {
+        return idcardNo.replaceAll("(\\d{4})(\\d+)(\\d{4})", "$1***$3");
+    }
 }

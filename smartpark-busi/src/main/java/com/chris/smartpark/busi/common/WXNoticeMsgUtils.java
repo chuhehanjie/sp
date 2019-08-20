@@ -84,10 +84,12 @@ public class WXNoticeMsgUtils {
                 if (!formIdMarker.isUsed()) {
                     formId = formIdMarker.getFormId();
                     formIdMarker.setUsed(true);
-                    redisUtils.set(key, list, WX_FORM_ID_EXPIRE);
+                    item.put(VisitorConstants.Keys.USED, Boolean.TRUE);
+                    log.info("取出的 formId = {}", formId);
                     break;
                 }
             }
+            redisUtils.set(key, list, WX_FORM_ID_EXPIRE);
         }
         return formId;
     }

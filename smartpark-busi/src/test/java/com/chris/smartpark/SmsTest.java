@@ -57,6 +57,9 @@ public class SmsTest {
         SMSEntity smsEntity2 = new SMSEntity();
         smsEntity2.setMobile(mobile);
         smsEntity2.setSmsType(Constant.SMSType.NOTICE);
+        JSONObject templateParam2 = new JSONObject();
+        templateParam2.put(VisitorConstants.Keys.VISITOR_NAME, "张学友");
+        smsEntity2.setTemplateParam(templateParam2.toJSONString());
         smsEntity2.setTemplateCode(Constant.SMSTemplateCode.RESERVATION_HANDLE.getTemplateCode());
         SendSMSUtils.sendSms(smsEntity2);
         System.out.println("发送预约单处理短信给员工");

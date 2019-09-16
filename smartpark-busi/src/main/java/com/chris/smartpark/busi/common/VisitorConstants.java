@@ -122,6 +122,7 @@ public class VisitorConstants {
         String KEY_WORD = "keyword";
         String BUILDING = "building";
         String DOOR_CTRL_PROVIDER = "DOOR_CTRL_PROVIDER";
+        String VISITOR_NAME = "visitorName";
     }
 
 

@@ -271,7 +271,7 @@ public class VisitorReservationServiceImpl implements VisitorReservationService 
             try {
                 this.wxNoticeMsgUtils.sendOrderCreatedMsg2Visitor(reservationOrder, formId);
                 this.wxNoticeMsgUtils.sendOrderAccpetMsg2Staff(reservationOrder, visitorInfo, formId);
-                this.sendSMS2Staff(reservationOrder);
+                this.sendSMS2Staff(reservationOrder, visitorInfo);
             } catch (Exception e) {
                 log.error("异步消息发送异常！", e);
             }
@@ -285,10 +285,13 @@ public class VisitorReservationServiceImpl implements VisitorReservationService 
         }
     }
 
-    private void sendSMS2Staff(VisitorReservationEntity reservationOrder) {
+    private void sendSMS2Staff(VisitorReservationEntity reservationOrder, VisitorInfoEntity visitorInfo) {
         SMSEntity smsEntity = new SMSEntity();
         smsEntity.setMobile(reservationOrder.getStaffMobile());
         smsEntity.setSmsType(Constant.SMSType.NOTICE);
+        JSONObject templateParam = new JSONObject();
+        templateParam.put(VisitorConstants.Keys.VISITOR_NAME, visitorInfo.getName());
+        smsEntity.setTemplateParam(templateParam.toJSONString());
         smsEntity.setTemplateCode(Constant.SMSTemplateCode.RESERVATION_HANDLE.getTemplateCode());
         SendSMSUtils.sendSms(smsEntity);
         log.info("发送短信给员工成功");

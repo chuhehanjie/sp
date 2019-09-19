@@ -1,5 +1,7 @@
 package com.chris.smartpark.base.dto;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.Serializable;
 
 public class BaseStaffDTO implements Serializable {
@@ -14,6 +16,16 @@ public class BaseStaffDTO implements Serializable {
     private String mobile;
     //身份证
     private String idcardnumber;
+
+    /**
+     * 部门ID
+     */
+    private Long deptId;
+
+    /**
+     * 部门名称
+     */
+    private String deptName;
 
     public Long getId() {
         return id;
@@ -58,9 +70,35 @@ public class BaseStaffDTO implements Serializable {
     public BaseStaffDTO() {
     }
 
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
     public BaseStaffDTO(Long id, String username, String mobile) {
         this.id = id;
         this.username = username;
         this.mobile = mobile;
+    }
+
+    public static void main(String[] args) {
+        BaseStaffDTO s = new BaseStaffDTO();
+        s.setId(123L);
+        s.setEmploynum("EMP10086");
+        s.setUsername("张三");
+        s.setMobile("18877889900");
+        s.setIdcardnumber("2348327239742398");
+        System.out.println(JSONObject.toJSONString(s));
     }
 }

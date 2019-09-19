@@ -2,6 +2,7 @@ package com.chris.smartpark;
 
 import com.alibaba.fastjson.JSONObject;
 import com.chris.BaseApplication;
+import com.chris.smartpark.base.dto.BaseStaffDTO;
 import com.chris.smartpark.base.entity.BaseOrganizationEntity;
 import com.chris.smartpark.base.entity.BaseStaffEntity;
 import com.chris.smartpark.base.service.BaseOrganizationService;
@@ -562,4 +563,9 @@ public class BaseStaffTest {
 		System.out.println("员工所有园区名称为 = " + this.baseStaffService.queryParkInfoByStaffMobile("18975841003"));
 	}
 
+	@Test
+	public void queryStaffByMobile() {
+		BaseStaffDTO staff = this.baseStaffService.queryByMobile("18975841003");
+		System.out.println("员工信息 = " + JSONObject.toJSONString(staff));
+	}
 }

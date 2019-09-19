@@ -3,7 +3,6 @@ package com.chris.smartpark.base.service.impl;
 import com.chris.base.common.utils.ValidateUtils;
 import com.chris.smartpark.base.dto.BaseStaffDTO;
 import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,14 +76,7 @@ public class BaseStaffServiceImpl implements BaseStaffService {
 
 	@Override
 	public BaseStaffDTO queryByMobile(String mobile) {
-		List<BaseStaffEntity> staffList = this.queryList(ImmutableMap.of("mobile", mobile));
-		if (!ValidateUtils.isEmptyCollection(staffList)) {
-			BaseStaffEntity baseStaffEntity = staffList.get(0);
-			BaseStaffDTO baseStaffDTO = new BaseStaffDTO();
-			BeanUtils.copyProperties(baseStaffEntity, baseStaffDTO);
-			return baseStaffDTO;
-		}
-		return null;
+		return this.baseStaffDao.queryByMobile(mobile);
 	}
 
 	@Override

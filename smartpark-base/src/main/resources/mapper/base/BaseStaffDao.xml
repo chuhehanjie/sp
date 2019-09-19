@@ -304,4 +304,18 @@
 		where staff.MOBILE = #{mobile}
 	</select>
 
+	<select id="queryByMobile" parameterType="java.lang.String" resultType="com.chris.smartpark.base.dto.BaseStaffDTO">
+		select
+			t.id,
+			t.USERNAME AS username,
+			t.IDCARDNUMBER AS idcardnumber,
+			t.EMPLOYNUM AS employnum,
+			t.MOBILE AS mobile,
+			org.id AS deptId,
+			org.DEPTNAME AS deptName
+		from base_staff t,base_organization org
+		where t.SDEPTCODE = org.SDEPTCODE
+		AND t.MOBILE = #{mobile}
+	</select>
+
 </mapper>
